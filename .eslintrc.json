@@ -1,5 +1,6 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "ignorePatterns": ["next-env.d.ts", ".next/**", "coverage/**", "playwright-report/**"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
       "warn",

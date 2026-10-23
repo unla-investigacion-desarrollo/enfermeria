@@ -143,12 +143,12 @@ CSP y headers básicos.
 
 ### Fase 2 — Autenticación y roles
 
-- [ ] Auth.js Credentials con bcrypt; sesión con role y mustChangePassword.
-- [ ] `middleware.ts` con las reglas de la sección 3.
-- [ ] Pantallas de login y cambio de contraseña.
-- [ ] Seed del admin desde variables de entorno.
-- [ ] Rate limit de login.
-- [ ] Aceptación: admin obligado a cambiar contraseña; estudiante no abre `/admin/**`; e2e de login y cambio.
+- [x] Auth.js Credentials con bcrypt; sesión con role y mustChangePassword.
+- [x] `middleware.ts` con las reglas de la sección 3.
+- [x] Pantallas de login y cambio de contraseña.
+- [x] Seed del admin desde variables de entorno.
+- [x] Rate limit de login.
+- [x] Aceptación: admin obligado a cambiar contraseña; estudiante no abre `/admin/**`; e2e de login y cambio.
 
 ### Fase 3 — Admin: estudiantes
 

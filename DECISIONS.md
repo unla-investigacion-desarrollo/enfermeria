@@ -27,3 +27,29 @@ más simple y se anota acá.
 9. **Zod 4** (versión estable actual) en lugar de Zod 3.
 10. **Vitest en entorno `node`** para funciones puras. Los tests de componentes, si
     hicieran falta, usarán `jsdom` en un proyecto separado.
+
+## Fase 2
+
+11. **Redirect del login calculado en la server action.** `signIn` se invoca con
+    `redirect: false` y, tras validar, la action hace `redirect()` según
+    rol/`mustChangePassword`. Si se deja que el middleware intercepte el redirect
+    del server action, Next.js muestra el contenido correcto pero conserva la URL
+    anterior (`/inicio` con la pantalla de cambio de contraseña).
+12. **El middleware queda como red de seguridad**, no como único mecanismo: las
+    páginas de servidor vuelven a pedir `auth()` y las acciones validan la sesión.
+13. **`mustChangePassword` vive en el JWT** y se actualiza con `unstable_update`
+    al cambiar la contraseña. Es la única forma de que el middleware (edge) lo
+    conozca sin consultar la base.
+14. **Rate limit en memoria** con ventana fija de 15 minutos y 5 fallos por
+    `email|IP`. Se reinicia al reiniciar el proceso y no se comparte entre
+    instancias; suficiente para el MVP, a reemplazar si se despliega en varias.
+15. **Playwright 1.64.1** para usar el Chromium ya cacheado en el equipo. Se agregó
+    `PLAYWRIGHT_CHANNEL` como variable opcional para correr contra Chrome
+    instalado (`PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`).
+16. **Usuarios de e2e** se crean en `tests/e2e/global-setup.ts` con bcrypt cost 4
+    (solo test) y se resetean en cada corrida. El test que cambia la contraseña del
+    admin corre solo en el proyecto `chromium` para no chocar con `mobile`.
+17. **Rutas placeholder** `/inicio`, `/tecnicas`, `/perfil`, `/admin/*` para que la
+    navegación y los redirects funcionen desde esta fase; se completan en 3 a 6.
+18. **Sin recuperación de contraseña por email** (fuera de alcance): el admin
+    resetea contraseñas en la Fase 3.
