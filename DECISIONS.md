@@ -53,3 +53,23 @@ más simple y se anota acá.
     navegación y los redirects funcionen desde esta fase; se completan en 3 a 6.
 18. **Sin recuperación de contraseña por email** (fuera de alcance): el admin
     resetea contraseñas en la Fase 3.
+
+## Fase 3
+
+19. **Búsqueda de estudiantes por nombre, apellido o email.** No se busca por DNI
+    para no exponer un dato personal en la URL (Ley 25.326), aunque el DNI sí se
+    muestra en la tabla del admin.
+20. **El reseteo de contraseña no devuelve secretos.** El admin escribe o genera
+    una provisoria en el navegador y la comunica por un canal seguro; la acción
+    solo guarda el hash y marca `mustChangePassword = true`.
+21. **Formulario de reseteo con `<details>` nativo** para que se abra incluso si
+    React todavía no hidrató la página. El mensaje de éxito se muestra fuera del
+    `<details>` porque la revalidación posterior cierra el desplegable.
+22. **Se restauran los valores del alta cuando hay error.** React 19 limpia los
+    inputs al completar una acción; si la acción devuelve error, se repueblan
+    desde lo último enviado para no obligar a reescribir todo.
+23. **Errores de unicidad traducidos** desde Prisma (`P2002`) a mensajes claros
+    para email y DNI.
+24. **Datos de e2e:** los estudiantes creados por tests usan el prefijo `e2e.` y
+    se borran al inicio de cada corrida. Los usuarios fijos de test se
+    re-siembran con bcrypt cost 4.

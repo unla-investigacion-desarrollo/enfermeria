@@ -152,9 +152,9 @@ CSP y headers básicos.
 
 ### Fase 3 — Admin: estudiantes
 
-- [ ] Listado, alta, desactivar/reactivar, reseteo de contraseña.
-- [ ] Un estudiante desactivado no puede iniciar sesión.
-- [ ] Aceptación: e2e alta → ingreso con provisoria → cambio → inicio; duplicados con error claro.
+- [x] Listado, alta, desactivar/reactivar, reseteo de contraseña.
+- [x] Un estudiante desactivado no puede iniciar sesión.
+- [x] Aceptación: e2e alta → ingreso con provisoria → cambio → inicio; duplicados con error claro.
 
 ### Fase 4 — Contenido: técnicas
 

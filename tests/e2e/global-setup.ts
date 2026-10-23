@@ -39,6 +39,9 @@ async function upsertTestUser(input: {
 }
 
 export default async function globalSetup() {
+  // Limpia estudiantes creados por corridas e2e anteriores.
+  await prisma.user.deleteMany({ where: { email: { startsWith: "e2e." } } });
+
   await upsertTestUser({
     email: "admin.e2e@unla.edu.ar",
     dni: "11111111",
@@ -68,6 +71,16 @@ export default async function globalSetup() {
     role: "STUDENT",
     mustChangePassword: false,
     active: false,
+  });
+
+  await upsertTestUser({
+    email: "admin.gestion@unla.edu.ar",
+    dni: "44444444",
+    firstName: "Graciela",
+    lastName: "Gestión",
+    password: "Gestion1234!",
+    role: "ADMIN",
+    mustChangePassword: false,
   });
 
   await prisma.$disconnect();

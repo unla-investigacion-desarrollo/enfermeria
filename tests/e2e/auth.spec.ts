@@ -25,7 +25,7 @@ test("el admin es obligado a cambiar la contraseña y llega a su panel", async (
   await page.getByRole("button", { name: "Guardar y continuar" }).click();
 
   await expect(page).toHaveURL(/\/admin\/estudiantes/);
-  await expect(page.getByRole("heading", { name: "Estudiantes" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Estudiantes", exact: true })).toBeVisible();
 
   await page.goto("/cambiar-password");
   await expect(page).toHaveURL(/\/admin\/estudiantes/);
