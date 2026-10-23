@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: manual-enfermeria-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: manual
+      POSTGRES_PASSWORD: manual
+      POSTGRES_DB: manual
+    ports:
+      # DB_PORT permite convivir con otro PostgreSQL local en el 5432.
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - manual_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U manual -d manual"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  manual_pgdata:

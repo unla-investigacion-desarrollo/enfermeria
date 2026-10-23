@@ -1,0 +1,208 @@
+// Esquema de datos del Manual Digital de Técnicas de Enfermería.
+// El XP total NO se persiste: se calcula como SUM(XpEvent.amount).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum ObjectiveKind {
+  GENERAL
+  SPECIFIC
+}
+
+enum ActivityType {
+  ORDER_STEPS
+  TRIVIA
+  ESCAPE_ROOM
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  firstName          String
+  lastName           String
+  dni                String              @unique
+  email              String              @unique
+  passwordHash       String
+  role               Role                @default(STUDENT)
+  mustChangePassword Boolean             @default(true)
+  active             Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  readings           ReadingCompletion[]
+  attempts           ActivityAttempt[]
+  xpEvents           XpEvent[]
+  badges             UserBadge[]
+  videoViews         VideoView[]
+}
+
+model Technique {
+  id          String           @id @default(cuid())
+  slug        String           @unique
+  title       String
+  summary     String?
+  definition  String
+  coverImage  String?
+  published   Boolean          @default(false)
+  version     Int              @default(1)
+  updatedAt   DateTime         @updatedAt
+  objectives  Objective[]
+  materials   Material[]
+  steps       Step[]
+  images      TechniqueImage[]
+  videos      Video[]
+  checklist   ChecklistItem[]
+  activities  Activity[]
+  questions   TriviaQuestion[]
+}
+
+model Objective {
+  id          String        @id @default(cuid())
+  techniqueId String
+  technique   Technique     @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  kind        ObjectiveKind
+  text        String
+  order       Int
+}
+
+model Material {
+  id          String    @id @default(cuid())
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  text        String
+  order       Int
+}
+
+model Step {
+  id          String    @id @default(cuid())
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  order       Int
+  text        String
+  emphasis    Boolean   @default(false)
+}
+
+model TechniqueImage {
+  id          String    @id @default(cuid())
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  url         String
+  alt         String
+  credit      String
+  order       Int
+}
+
+model Video {
+  id            String      @id @default(cuid())
+  techniqueId   String
+  technique     Technique   @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  title         String
+  url           String
+  institutional Boolean     @default(false)
+  order         Int
+  views         VideoView[]
+}
+
+model ChecklistItem {
+  id          String    @id @default(cuid())
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  text        String
+  order       Int
+}
+
+model Activity {
+  id          String            @id @default(cuid())
+  techniqueId String
+  technique   Technique         @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  type        ActivityType
+  title       String
+  passScore   Int
+  config      Json
+  attempts    ActivityAttempt[]
+
+  @@unique([techniqueId, type])
+}
+
+model TriviaQuestion {
+  id          String    @id @default(cuid())
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  prompt      String
+  options     Json
+  correctIdx  Int
+  explanation String
+  reviewed    Boolean   @default(false)
+  active      Boolean   @default(true)
+}
+
+model ReadingCompletion {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  techniqueId String
+  version     Int
+  completedAt DateTime @default(now())
+}
+
+model VideoView {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  videoId  String
+  video    Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  viewedAt DateTime @default(now())
+
+  @@unique([userId, videoId])
+}
+
+model ActivityAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  score      Int
+  passed     Boolean
+  detail     Json
+  createdAt  DateTime @default(now())
+}
+
+model XpEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  reason    String
+  refKey    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, refKey])
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  code        String      @unique
+  name        String
+  description String
+  icon        String
+  users       UserBadge[]
+}
+
+model UserBadge {
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  badgeId  String
+  badge    Badge    @relation(fields: [badgeId], references: [id])
+  earnedAt DateTime @default(now())
+
+  @@id([userId, badgeId])
+}
