@@ -314,3 +314,18 @@ más simple y se anota acá.
     detectar cualquier deriva. El contenido clínico coincide con el documento
     oficial provisto por Enfermería (definición, 3 objetivos, 6 materiales, 29
     pasos, 15 ítems de check list y video E7rOztgH7Q8).
+76. **Check list autoevaluable.** El check list oficial de 15 ítems se muestra
+    como autoevaluación con tres opciones por ítem (“Lo realizo correctamente”,
+    “Lo realizo con dificultad”, “No lo realiza”), progreso y botón para
+    reiniciar. Usa radios nativos dentro de un `fieldset` con `legend`, objetivos
+    táctiles de 44 px y tres columnas desde `sm`. No persiste en la base: es una
+    herramienta de repaso y así se lo aclara en pantalla; la lista de cotejo
+    oficial sigue siendo la válida para la práctica.
+77. **Banco inicial de trivia derivado del contenido oficial.** A pedido del
+    equipo del proyecto se cargaron 16 preguntas a partir de los 29 pasos y del
+    check list, sin agregar información clínica ajena al documento. Cada pregunta
+    tiene una respuesta correcta y tres distractores que invierten una conducta
+    del procedimiento; la explicación cita el paso. Quedan `reviewed: true` y
+    `active: true` para habilitar el juego, con la recomendación de validación
+    docente. El seed de e2e resiembra este banco, y las pruebas siguen usando
+    preguntas `[e2e]` para no depender de su contenido.

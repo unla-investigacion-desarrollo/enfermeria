@@ -113,5 +113,214 @@
       "config": { "questionCount": 10 }
     }
   ],
-  "questions": []
+  "questions": [
+    {
+      "prompt": "Antes de comenzar la técnica, ¿qué se debe verificar?",
+      "options": [
+        "La indicación, la prescripción, la solución, los aditivos, la velocidad, la identidad, las alergias y el vencimiento e integridad de los insumos.",
+        "Solo la indicación médica; el resto se controla después de la punción.",
+        "Únicamente el calibre del catéter y la fecha de la práctica.",
+        "La identidad del paciente puede confirmarse al finalizar el procedimiento."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 1 de la técnica pide verificar todos esos datos antes de empezar.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cuándo se realiza la higiene de manos?",
+      "options": [
+        "Al inicio según protocolo, y nuevamente con preparación alcohólica antes de la punción.",
+        "Solo al finalizar la técnica.",
+        "Únicamente si se observan manchas visibles en las manos.",
+        "Después de colocarse los guantes, para no contaminarlos."
+      ],
+      "correctIdx": 0,
+      "explanation": "Los pasos 2, 16 y 28 indican lavado de manos al inicio, higiene con preparación alcohólica antes de la punción y lavado al finalizar.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cómo debe prepararse la bandeja?",
+      "options": [
+        "Con todos los insumos necesarios, manteniendo los estériles cerrados hasta su uso.",
+        "Con los insumos estériles abiertos desde el inicio para ganar tiempo.",
+        "Solo con el catéter y el suero; el resto se pide durante la punción.",
+        "Sin contenedor de punzocortantes para evitar errores."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 4 detalla los insumos de la bandeja y pide mantener los estériles cerrados hasta usarlos.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Qué datos deben figurar en los rótulos de la solución, la guía y la venoclisis?",
+      "options": [
+        "Identificación, solución o aditivos, fecha y hora, calibre y sitio, y firma o iniciales.",
+        "Solo el nombre del paciente y la fecha.",
+        "El diagnóstico y el número de historia clínica, sin datos de la solución.",
+        "La velocidad de infusión y nada más."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 5 enumera la información solicitada por la institución para los rótulos.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cómo se comprueba que la guía de suero quedó bien purgada?",
+      "options": [
+        "Verificando la ausencia de aire y manteniendo protegido el extremo distal.",
+        "Dejando aire en la guía para facilitar la infusión.",
+        "Soplándola con la boca antes de conectarla.",
+        "Purgándola después de conectar al paciente."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 8 pide purgar completamente la guía, proteger el extremo distal y verificar que no quede aire.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "Al ingresar a la unidad, ¿qué corresponde hacer?",
+      "options": [
+        "Saludar, presentarse, confirmar la identidad del sujeto de atención y explicar el procedimiento.",
+        "Comenzar la punción y explicar el procedimiento al final.",
+        "Confirmar la identidad solo con el número de cama.",
+        "Evitar explicar para no generar ansiedad."
+      ],
+      "correctIdx": 0,
+      "explanation": "Los pasos 9 y 10 indican saludar, presentarse, confirmar la identidad, explicar y pedir colaboración.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Qué zonas deben evitarse al elegir el sitio de punción?",
+      "options": [
+        "Fístula arteriovenosa, mastectomía o vaciamiento ganglionar, infección, flebitis, hematomas y lesiones.",
+        "Venas visibles y palpables del antebrazo.",
+        "El dorso de la mano si está íntegro.",
+        "Cualquier zona distal al lazo."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 13 pide valorar ambos miembros y evitar zonas contraindicadas como las mencionadas.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Dónde y cómo se coloca el lazo?",
+      "options": [
+        "De 7 a 10 cm por encima del sitio elegido, pidiendo que abra y cierre suavemente la mano.",
+        "Justo sobre el sitio de punción.",
+        "En el brazo contrario, a 20 cm del sitio.",
+        "Debajo del sitio elegido, cerca de la muñeca."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 14 indica colocar el lazo de 7 a 10 cm por encima del sitio elegido.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "Después de elegir la vena y antes de la antisepsia, ¿qué corresponde hacer?",
+      "options": [
+        "Palpar nuevamente la vena sin guante y elegir el catéter compatible con la terapia.",
+        "Palpar la vena con guantes estériles después del antiséptico.",
+        "Elegir el catéter más grueso sin importar la terapia.",
+        "Marcar la vena con lapicera."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 15 pide palpar nuevamente la vena sin guante y elegir el catéter según la terapia de infusión.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cómo se aplica el antiséptico en el sitio de punción?",
+      "options": [
+        "Con fricción desde el centro hacia la periferia, respetando el tiempo de contacto y dejando secar por completo.",
+        "Con un movimiento circular desde la periferia al centro, sin esperar.",
+        "Soplándolo o abanicándolo para acelerar el secado.",
+        "Aplicándolo y palpando la zona inmediatamente."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 17 pide fricción del centro a la periferia, respetar el tiempo de contacto y no soplar, abanicar ni volver a palpar.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Con qué ángulo aproximado se introduce el catéter?",
+      "options": [
+        "Entre 10° y 30°, ajustado a la profundidad de la vena.",
+        "A 90°, perpendicular a la piel.",
+        "A 45° fijos, sin importar la vena.",
+        "A 5°, siempre paralelo a la piel."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 19 indica un ángulo aproximado de 10° a 30° según la profundidad de la vena.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "Al observar retorno sanguíneo, ¿qué se debe hacer?",
+      "options": [
+        "Disminuir el ángulo, avanzar unos milímetros si corresponde y progresar únicamente el catéter.",
+        "Reintroducir la aguja dentro del catéter para corregir la dirección.",
+        "Avanzar la aguja y el catéter juntos hasta el tope.",
+        "Retirar todo el dispositivo y volver a puncionar en el mismo sitio."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 20 prohíbe reintroducir o avanzar la aguja dentro del catéter.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cómo se descarta la aguja recta?",
+      "options": [
+        "De inmediato, sin reencapuchar, en el contenedor de punzocortantes.",
+        "Reencapuchándola y dejándola en la bandeja.",
+        "En la bolsa de residuos comunes.",
+        "Guardándola en el bolsillo del uniforme."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 22 pide retirar la aguja y desecharla de inmediato, sin reencapuchar, en el contenedor de punzocortantes.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Con qué se fija el catéter?",
+      "options": [
+        "Con Tegaderm o gasa estéril y cintas, según el protocolo de la institución.",
+        "Con cinta adhesiva directamente sobre el sitio de punción.",
+        "Sin fijación, para poder controlar la vena.",
+        "Con algodón y esparadrapo sin esterilidad."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 24 indica fijar con Tegaderm o gasa estéril y cintas según el protocolo institucional.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Cómo se regula la velocidad de infusión prescrita?",
+      "options": [
+        "Contando las gotas durante un minuto con reloj o configurando la bomba, según el factor de goteo.",
+        "Abriendo el regulador al máximo, sin contar gotas ni usar bomba.",
+        "Regulando según la sensación del paciente.",
+        "Sin comprobar el factor de goteo del equipo."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 26 pide contar las gotas durante un minuto o configurar la bomba y comprobar el factor de goteo.",
+      "reviewed": true,
+      "active": true
+    },
+    {
+      "prompt": "¿Qué datos deben registrarse en la hoja de enfermería?",
+      "options": [
+        "Fecha y hora, indicación, sitio y lado, vena, calibre, intentos, solución, velocidad, respuesta, sitio, fijación y educación brindada.",
+        "Solo la fecha y el nombre del estudiante.",
+        "Únicamente el calibre del catéter utilizado.",
+        "Nada, porque el procedimiento queda registrado en el sistema."
+      ],
+      "correctIdx": 0,
+      "explanation": "El paso 29 enumera todos los datos que deben quedar registrados.",
+      "reviewed": true,
+      "active": true
+    }
+  ]
 }

@@ -8,18 +8,14 @@
  *   npx tsx scripts/capture-screenshots.ts
  *
  * El script reinicia el progreso de la cuenta demo para que las capturas sean
- * deterministas y crea preguntas ficticias de trivia mientras dura la captura.
+ * deterministas y responde la trivia oficial con el banco cargado por el seed.
  */
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { chromium, devices, type Page } from "@playwright/test";
 import { PrismaClient } from "@prisma/client";
-import {
-  FIXTURE_COUNT,
-  TECHNIQUE_SLUG,
-  correctText,
-  createTriviaFixtures,
-} from "../tests/e2e/trivia-fixtures";
+
+const TECHNIQUE_SLUG = "via-periferica-adulto";
 
 const prisma = new PrismaClient();
 const baseUrl = process.env.CAPTURE_BASE_URL ?? "http://localhost:3001";
@@ -87,19 +83,40 @@ async function solveOrder(page: Page) {
   await page.getByRole("heading", { name: "¡Aprobaste!" }).waitFor();
 }
 
-async function answerTrivia(page: Page, fixtures: Awaited<ReturnType<typeof createTriviaFixtures>>) {
-  for (let index = 0; index < FIXTURE_COUNT; index += 1) {
-    await page
-      .getByText(`Pregunta ${index + 1} de ${FIXTURE_COUNT}`, { exact: true })
-      .waitFor();
+type BankQuestion = { prompt: string; options: string[]; correctIdx: number };
+
+async function loadTriviaBank(): Promise<BankQuestion[]> {
+  const questions = await prisma.triviaQuestion.findMany({
+    where: { technique: { slug: TECHNIQUE_SLUG }, active: true },
+    select: { prompt: true, options: true, correctIdx: true },
+  });
+
+  return questions.map((question) => ({
+    prompt: question.prompt,
+    options: Array.isArray(question.options)
+      ? question.options.filter((option): option is string => typeof option === "string")
+      : [],
+    correctIdx: question.correctIdx,
+  }));
+}
+
+async function answerTrivia(page: Page, bank: BankQuestion[]) {
+  const counter = page.getByText(/^Pregunta \d+ de \d+$/);
+  const total = Number((await counter.innerText()).match(/de (\d+)/)?.[1] ?? 0);
+
+  for (let index = 0; index < total; index += 1) {
+    await page.getByText(`Pregunta ${index + 1} de ${total}`, { exact: true }).waitFor();
     const prompt = (await page.locator("#trivia-pregunta").textContent())?.trim();
-    const question = fixtures.questions.find((item) => item.prompt === prompt);
+    const question = bank.find((item) => item.prompt === prompt);
     if (!question) throw new Error(`No se encontró la pregunta: ${prompt}`);
 
-    await page.getByRole("radio", { name: correctText(question), exact: true }).check();
+    const correct = question.options[question.correctIdx];
+    if (!correct) throw new Error(`La pregunta no tiene opción correcta: ${prompt}`);
+
+    await page.getByRole("radio", { name: correct, exact: true }).check();
     await page
       .getByRole("button", {
-        name: index === FIXTURE_COUNT - 1 ? "Responder trivia" : "Siguiente",
+        name: index === total - 1 ? "Responder trivia" : "Siguiente",
         exact: true,
       })
       .click();
@@ -129,7 +146,7 @@ async function screenshot(
 async function main() {
   await mkdir(outputDir, { recursive: true });
   await resetDemoProgress();
-  const fixtures = await createTriviaFixtures(prisma);
+  const triviaBank = await loadTriviaBank();
 
   const browser = await chromium.launch();
   const mobile = await browser.newContext({
@@ -166,23 +183,25 @@ async function main() {
       .click();
     await page.getByText("Visto", { exact: true }).waitFor();
 
+    const checklist = page.locator("#checklist");
+    await checklist.scrollIntoViewIfNeeded();
+    await checklist.screenshot({
+      path: path.join(outputDir, "12-checklist.jpg"),
+      type: "jpeg",
+      quality: 82,
+    });
+
     await page.goto(`${baseUrl}/tecnicas/${TECHNIQUE_SLUG}/jugar/ordenar`);
     await page.locator('[data-game-ready="true"]').waitFor();
     await screenshot(page, "05-ordenar.jpg");
     await solveOrder(page);
     await screenshot(page, "06-ordenar-resultado.jpg");
 
-    // La trivia se juega con el banco ficticio de e2e para completar el demo.
-    // Después se restaura el banco real (vacío) y se captura el estado vacío,
-    // que es el que ve el estudiantado hasta que llegue el Apéndice B.
+    // La trivia se responde con el banco oficial cargado por el seed.
     await page.goto(`${baseUrl}/tecnicas/${TECHNIQUE_SLUG}/jugar/trivia`);
     await page.locator('[data-trivia-ready="true"]').waitFor();
-    await answerTrivia(page, fixtures);
-    await fixtures.restore();
-
-    await page.goto(`${baseUrl}/tecnicas/${TECHNIQUE_SLUG}/jugar/trivia`);
-    await page.getByText("La trivia todavía no está disponible.").waitFor();
     await screenshot(page, "07-trivia.jpg");
+    await answerTrivia(page, triviaBank);
 
     await page.goto(`${baseUrl}/perfil`);
     await page.getByRole("heading", { name: "Mi perfil" }).waitFor();
@@ -207,14 +226,16 @@ async function main() {
     await admin.getByRole("heading", { name: "Técnicas", exact: true }).waitFor();
     await screenshot(admin, "10-admin-tecnicas.jpg", { fullPage: false });
 
-    await admin.getByRole("link", { name: "Editar" }).first().click();
-    await admin.getByRole("link", { name: "Preguntas" }).click();
+    const technique = await prisma.technique.findUniqueOrThrow({
+      where: { slug: TECHNIQUE_SLUG },
+      select: { id: true },
+    });
+    await admin.goto(`${baseUrl}/admin/tecnicas/${technique.id}/preguntas`);
     await admin.getByRole("heading", { name: "Preguntas de trivia" }).waitFor();
     await screenshot(admin, "11-admin-preguntas.jpg", { fullPage: false });
   } finally {
     await desktop.close();
     await browser.close();
-    await fixtures.restore();
     await prisma.$disconnect();
   }
 

@@ -20,6 +20,7 @@ test("la técnica seed tiene el contenido oficial completo", async () => {
       steps: { orderBy: { order: "asc" } },
       materials: { orderBy: { order: "asc" } },
       checklist: { orderBy: { order: "asc" } },
+      questions: { where: { active: true }, orderBy: { prompt: "asc" } },
       _count: { select: { steps: true, materials: true, checklist: true, activities: true } },
     },
   });
@@ -36,6 +37,10 @@ test("la técnica seed tiene el contenido oficial completo", async () => {
   );
   expect(technique?.materials.map((material) => material.text)).toEqual(seed.materials);
   expect(technique?.checklist.map((item) => item.text)).toEqual(seed.checklist);
+  expect(technique?.questions.map((question) => question.prompt).sort()).toEqual(
+    seed.questions.map((question) => question.prompt).sort(),
+  );
+  expect(technique?.questions.every((question) => question.reviewed)).toBe(true);
 });
 
 test("el admin edita, reordena, publica y sube la versión", async ({ page }, testInfo) => {

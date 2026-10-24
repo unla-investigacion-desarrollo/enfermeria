@@ -12,12 +12,16 @@ contenidos.
 
 - **Lectura de la técnica** con definición, objetivos, materiales, 29 pasos,
   imágenes de referencia, video de YouTube sin cookies y check list.
+- **Check list autoevaluable** con los 15 ítems oficiales y tres niveles de
+  desempeño (“Lo realizo correctamente”, “Lo realizo con dificultad”, “No lo
+  realiza”), con progreso y reinicio.
 - **Registro de lectura** con XP la primera vez y relecturas registradas.
 - **Juego “Ordená los pasos”** con arrastrar y soltar, botones accesibles para
   teclado y corrección en el servidor.
-- **Trivia** de 10 preguntas activas al azar, opciones mezcladas, una pregunta
-  por pantalla y corrección exclusivamente en el servidor (la respuesta correcta
-  nunca llega antes de responder).
+- **Trivia** de 10 preguntas al azar sobre un banco de 16 derivadas del
+  contenido oficial, opciones mezcladas, una pregunta por pantalla y corrección
+  exclusivamente en el servidor (la respuesta correcta nunca llega antes de
+  responder).
 - **Gamificación** con XP auditable, niveles, insignias e insignia de técnica
   dominada al completar lectura y ambos juegos.
 - **Panel administrativo** para estudiantes, técnicas publicadas/borradores y
@@ -35,17 +39,20 @@ contenidos.
 | --- | --- | --- |
 | <img src="docs/screenshots/04-paso-a-paso.jpg" width="240" alt="Pasos de la técnica" /> | <img src="docs/screenshots/05-ordenar.jpg" width="240" alt="Juego de ordenar pasos" /> | <img src="docs/screenshots/06-ordenar-resultado.jpg" width="240" alt="Resultado del juego de ordenar" /> |
 
-| Trivia (banco pendiente) | Perfil y gamificación |
+| Trivia | Perfil y gamificación |
 | --- | --- |
-| <img src="docs/screenshots/07-trivia.jpg" width="240" alt="Estado vacío de la trivia" /> | <img src="docs/screenshots/08-perfil.jpg" width="240" alt="Perfil con XP e insignias" /> |
+| <img src="docs/screenshots/07-trivia.jpg" width="240" alt="Trivia con una pregunta y sus opciones" /> | <img src="docs/screenshots/08-perfil.jpg" width="240" alt="Perfil con XP e insignias" /> |
 
 | Administración de estudiantes | Técnicas | Preguntas de trivia |
 | --- | --- | --- |
 | <img src="docs/screenshots/09-admin-estudiantes.jpg" width="360" alt="Panel de estudiantes" /> | <img src="docs/screenshots/10-admin-tecnicas.jpg" width="360" alt="Panel de técnicas" /> | <img src="docs/screenshots/11-admin-preguntas.jpg" width="360" alt="Panel de preguntas de trivia" /> |
 
+| Check list autoevaluable |
+| --- |
+| <img src="docs/screenshots/12-checklist.jpg" width="360" alt="Check list con opciones de autoevaluación" /> |
+
 > Las capturas se generan con `npx tsx scripts/capture-screenshots.ts` sobre una
-> base con el seed y la cuenta demo. La trivia muestra su estado vacío porque el
-> banco del Apéndice B todavía no fue provisto.
+> base con el seed y la cuenta demo.
 
 ## Stack
 
@@ -175,11 +182,12 @@ docs/screenshots     Capturas usadas en este README
 El avance por fases está en [PLAN.md](./PLAN.md) y las decisiones técnicas en
 [DECISIONS.md](./DECISIONS.md).
 
-- **Apéndice B (banco de preguntas de trivia): pendiente.** No se inventó
-  contenido clínico. `prisma/seed-data/via-periferica.json` tiene
-  `questions: []`; el panel `/admin/tecnicas/[id]/preguntas` permite cargar,
-  revisar y activar preguntas cuando Enfermería entregue el banco. Los e2e usan
-  preguntas ficticias marcadas como tales.
+- **Banco de trivia inicial.** `prisma/seed-data/via-periferica.json` incluye
+  16 preguntas derivadas de los 29 pasos y del check list oficiales: cada una
+  tiene una opción correcta y tres distractores que invierten una conducta del
+  procedimiento. Se marcaron como `reviewed` para habilitar el juego; el equipo
+  de Enfermería puede editarlas, desactivarlas o reemplazarlas desde
+  `/admin/tecnicas/[id]/preguntas`.
 - **Imágenes de referencia provisorias.** Los archivos
   `public/uploads/placeholder-*.jpg` son marcadores generados; deben
   reemplazarse por el material definitivo desde el panel.

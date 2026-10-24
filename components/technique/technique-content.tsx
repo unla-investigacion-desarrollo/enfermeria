@@ -10,6 +10,7 @@ import type {
 } from "@prisma/client";
 import { toEmbedUrl } from "@/lib/videos";
 import { VideoPlayer } from "@/components/technique/video-player";
+import { ChecklistAssessment } from "@/components/technique/checklist-assessment";
 
 export type TechniqueWithContent = Technique & {
   objectives: Objective[];
@@ -206,11 +207,13 @@ export function TechniqueContent({
 
       {technique.checklist.length > 0 ? (
         <Section id="checklist" title="Check list">
-          <ol className="list-decimal space-y-2 pl-5 text-[15px]">
-            {technique.checklist.map((item) => (
-              <li key={item.id}>{item.text}</li>
-            ))}
-          </ol>
+          <p className="text-sm text-muted-foreground">
+            Marcá cómo realizás cada paso para identificar lo que necesitás repasar
+            antes de la práctica en simulación.
+          </p>
+          <ChecklistAssessment
+            items={technique.checklist.map((item) => ({ id: item.id, text: item.text }))}
+          />
         </Section>
       ) : null}
     </article>

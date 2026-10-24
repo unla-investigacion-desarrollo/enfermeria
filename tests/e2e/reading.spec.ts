@@ -110,6 +110,27 @@ test("ver el video registra una visualización y 20 XP", async ({ page }, testIn
   await expect(page.getByText("Visto", { exact: true })).toBeVisible();
 });
 
+test("el check list permite autoevaluar cada paso y reiniciar", async ({ page }) => {
+  await login(page);
+  await page.goto("/tecnicas/via-periferica-adulto");
+
+  const checklist = page.locator("#checklist");
+  await expect(checklist.getByRole("heading", { name: "Check list" })).toBeVisible();
+  const status = checklist.getByRole("status");
+  await expect(status).toHaveText("0 de 15 ítems evaluados");
+
+  const firstItem = checklist.getByRole("listitem").first();
+  await firstItem.getByRole("radio", { name: "Lo realizo correctamente" }).check();
+  await expect(status).toHaveText("1 de 15 ítems evaluados");
+
+  // Cambiar la valoración del mismo ítem no aumenta el total.
+  await firstItem.getByRole("radio", { name: "No lo realiza" }).check();
+  await expect(status).toHaveText("1 de 15 ítems evaluados");
+
+  await checklist.getByRole("button", { name: "Reiniciar" }).click();
+  await expect(status).toHaveText("0 de 15 ítems evaluados");
+});
+
 test("el perfil muestra nivel, XP e insignias", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium", "El perfil se verifica en desktop");
 

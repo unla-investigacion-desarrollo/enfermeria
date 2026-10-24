@@ -1,14 +1,20 @@
 # Datos de seed
 
-`via-periferica.json` contiene el Apéndice A (contenido de la técnica) y la
-configuración de sus actividades.
+`via-periferica.json` contiene el contenido oficial de la técnica (definición,
+objetivos, materiales, pasos y check list) y la configuración de sus actividades.
 
-## Preguntas de trivia (Apéndice B)
+## Preguntas de trivia
 
-El campo `questions` está vacío a la espera del banco de preguntas del Apéndice B.
+El campo `questions` incluye 16 preguntas derivadas de los pasos y del check list
+oficiales. Cada pregunta tiene una opción correcta y tres distractores que
+invierten una conducta del procedimiento; la explicación remite al paso de la
+técnica. Se marcan como `reviewed: true` para habilitarlas y `active: true` para
+que entren en la selección aleatoria de 10.
 
-**TODO(enfermería):** cargar las preguntas revisadas por el equipo de Enfermería.
-No inventar ni reformular contenido clínico.
+**TODO(enfermería):** validar el banco y ajustar, desactivar o reemplazar las
+preguntas desde `/admin/tecnicas/[id]/preguntas` si el equipo docente lo considera
+necesario. El contenido de las opciones no agrega información clínica ajena al
+documento oficial.
 
 Formato de cada pregunta:
 
@@ -24,8 +30,9 @@ Formato de cada pregunta:
 ```
 
 - `correctIdx` es el índice (base 0) de la opción correcta dentro de `options`.
-- `reviewed` queda en `false` hasta que Enfermería apruebe la pregunta.
-- El seed solo reemplaza el banco si `questions` tiene al menos una pregunta. Si
+- `reviewed` indica que la pregunta fue revisada; las que quedan en `false`
+  muestran una advertencia en el juego.
+- El seed reemplaza el banco cuando `questions` tiene al menos una pregunta. Si
   está vacío, conserva las preguntas cargadas desde `/admin`.
 
 ## Imágenes de referencia
