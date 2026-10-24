@@ -5,6 +5,8 @@ export const XP = {
   READING_VERSION: 30,
   VIDEO: 20,
   MASTERED: 200,
+  PASS: 150,
+  PERFECT: 50,
 } as const;
 
 export function readingFirstRefKey(techniqueId: string): string {
@@ -17,6 +19,14 @@ export function readingVersionRefKey(techniqueId: string, version: number): stri
 
 export function videoRefKey(videoId: string): string {
   return `VIDEO:${videoId}`;
+}
+
+export function passRefKey(activityId: string): string {
+  return `PASS:${activityId}`;
+}
+
+export function perfectRefKey(activityId: string): string {
+  return `PERFECT:${activityId}`;
 }
 
 export function masteredRefKey(techniqueId: string): string {

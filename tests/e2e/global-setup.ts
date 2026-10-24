@@ -97,20 +97,31 @@ export default async function globalSetup() {
     mustChangePassword: false,
   });
 
-  // El recorrido de lectura debe arrancar sin progreso para poder contar
-  // registros y XP de forma determinista en cada corrida.
-  const reader = await prisma.user.findUnique({
-    where: { email: "lector.e2e@unla.edu.ar" },
-    select: { id: true },
+  await upsertTestUser({
+    email: "jugador.e2e@unla.edu.ar",
+    dni: "66666666",
+    firstName: "Jugador",
+    lastName: "E2E",
+    password: "Jugador1234!",
+    role: "STUDENT",
+    mustChangePassword: false,
   });
 
-  if (reader) {
-    await prisma.userBadge.deleteMany({ where: { userId: reader.id } });
-    await prisma.activityAttempt.deleteMany({ where: { userId: reader.id } });
-    await prisma.videoView.deleteMany({ where: { userId: reader.id } });
-    await prisma.readingCompletion.deleteMany({ where: { userId: reader.id } });
-    await prisma.xpEvent.deleteMany({ where: { userId: reader.id } });
-  }
+  // Los recorridos de lectura y juegos deben arrancar sin progreso para poder
+  // contar registros y XP de forma determinista en cada corrida.
+  const progressUsers = await prisma.user.findMany({
+    where: {
+      email: { in: ["lector.e2e@unla.edu.ar", "jugador.e2e@unla.edu.ar"] },
+    },
+    select: { id: true },
+  });
+  const progressUserIds = progressUsers.map((user) => user.id);
+
+  await prisma.userBadge.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.activityAttempt.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.videoView.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.readingCompletion.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.xpEvent.deleteMany({ where: { userId: { in: progressUserIds } } });
 
   await prisma.$disconnect();
 }

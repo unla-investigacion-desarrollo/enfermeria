@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Gamepad2 } from "lucide-react";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/guard";
+import { buttonVariants } from "@/components/ui/button";
 import { TechniqueContent } from "@/components/technique/technique-content";
 import { ReadingCompletion } from "@/components/technique/reading-completion";
 import { ScrollProgress } from "@/components/technique/scroll-progress";
@@ -138,9 +139,18 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
                   </span>
                 </div>
                 <h3 className="text-base font-bold text-navy">{activity.title}</h3>
-                <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                  Próximamente
-                </span>
+                {activity.type === "ORDER_STEPS" ? (
+                  <Link
+                    href={`/tecnicas/${technique.slug}/jugar/ordenar`}
+                    className={buttonVariants({ size: "sm" })}
+                  >
+                    Jugar ahora
+                  </Link>
+                ) : (
+                  <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                    Próximamente
+                  </span>
+                )}
               </li>
             ))}
           </ul>

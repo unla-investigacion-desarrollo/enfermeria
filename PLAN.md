@@ -182,10 +182,10 @@ CSP y headers básicos.
 
 ### Fase 7 — Juego: Ordenar los pasos
 
-- [ ] Funciones puras de 6.1 con tests (mezcla nunca identidad; LIS conocido).
-- [ ] UI dnd-kit + botones ↑ ↓; pantalla de resultado.
-- [ ] Guardar intento, otorgar XP/insignias.
-- [ ] Aceptación: completable solo con teclado; aprobar dos veces da XP una vez; 100% otorga `ORDERED_MIND`.
+- [x] Funciones puras de 6.1 con tests (mezcla nunca identidad; LIS conocido).
+- [x] UI dnd-kit + botones ↑ ↓; pantalla de resultado.
+- [x] Guardar intento, otorgar XP/insignias.
+- [x] Aceptación: completable solo con teclado; aprobar dos veces da XP una vez; 100% otorga `ORDERED_MIND`.
 
 ### Fase 8 — Juego: Trivia
 

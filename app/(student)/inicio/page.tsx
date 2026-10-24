@@ -4,6 +4,7 @@ import { Gamepad2, ImageIcon, Video } from "lucide-react";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/guard";
+import { buttonVariants } from "@/components/ui/button";
 import { SearchForm } from "@/components/technique/search-form";
 import { TechniqueCard } from "@/components/technique/technique-card";
 import { matchesQuery } from "@/lib/techniques/search";
@@ -206,9 +207,18 @@ export default async function InicioPage({ searchParams }: PageProps) {
                     className="flex flex-wrap items-center justify-between gap-2 py-3"
                   >
                     <span className="text-sm font-medium">{activity.title}</span>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                      Próximamente
-                    </span>
+                    {activity.type === "ORDER_STEPS" ? (
+                      <Link
+                        href={`/tecnicas/${featured.slug}/jugar/ordenar`}
+                        className={buttonVariants({ size: "sm" })}
+                      >
+                        Jugar
+                      </Link>
+                    ) : (
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                        Próximamente
+                      </span>
+                    )}
                   </li>
                 ))}
                 {featured.activities.length === 0 ? (

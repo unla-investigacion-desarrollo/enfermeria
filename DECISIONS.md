@@ -178,3 +178,32 @@ más simple y se anota acá.
 49. **Perfil:** nivel y avance, XP total, técnicas leídas, cantidad de lecturas,
     insignias obtenidas con su fecha e historial de los últimos 20 eventos de XP.
     Solo se muestran insignias ganadas; las bloqueadas quedan para el pulido.
+
+## Fase 7
+
+50. **Lógica del juego en `lib/games/order-steps.ts`**, separada de la UI y con
+    tests: elige un bloque consecutivo de `blockSize` al azar, lo mezcla y
+    garantiza que nunca quede en el orden correcto (reintenta y, como último
+    recurso, intercambia los dos primeros). Si la técnica tiene menos pasos que
+    el bloque, usa todos.
+51. **El orden correcto no viaja al cliente antes de responder.** La página envía
+    solo pasos mezclados y `blockStart`; la acción vuelve a leer el bloque desde
+    la base, valida que los ids sean una permutación exacta y calcula el puntaje
+    con LIS. El resultado recién ahí muestra el orden correcto.
+52. **Intento guardado completo:** `detail` incluye `blockStart`, `blockIds`,
+    `proposedIds` y `lis`, para poder auditar el puntaje. `score` usa
+    `round(LIS / n * 100)` y `passed` se compara con el `passScore` de la
+    actividad.
+53. **XP de juegos idempotente:** `PASS:<activityId>` (150) y
+    `PERFECT:<activityId>` (50) se otorgan una sola vez, aunque se apruebe o se
+    repita el 100% en intentos posteriores. Todos los intentos se guardan.
+    `evaluateBadges` corre en la misma transacción, por lo que el 100% otorga
+    `ORDERED_MIND` y, si además hay lectura y trivia, `MASTER_<slug>`.
+54. **UI con dnd-kit (Pointer + Keyboard sensors) y botones ↑ ↓.** Los botones
+    permiten completar el juego solo con teclado; el e2e usa Enter sobre ellos y
+    sobre "Comprobar orden". La pantalla de resultado muestra puntaje,
+    aprobación, XP, insignias y el orden correcto; "Reintentar" recarga para
+    generar un bloque nuevo.
+55. **Página del juego en `/tecnicas/[slug]/jugar/ordenar`**, enlazada desde el
+    inicio y la lectura. Un usuario `jugador.e2e` con progreso limpio por corrida
+    verifica el recorrido sin interferir con el de lectura.

@@ -4,10 +4,19 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/guard";
+import {
+  blockSizeFromConfig,
+  blockStepIds,
+  isValidProposedOrder,
+  lisLength,
+  scoreOrder,
+} from "@/lib/games/order-steps";
 import { evaluateBadges } from "@/lib/gamification/badges";
 import type { EarnedBadge } from "@/lib/gamification/types";
 import {
   awardXp,
+  passRefKey,
+  perfectRefKey,
   readingFirstRefKey,
   readingVersionRefKey,
   videoRefKey,
@@ -155,4 +164,125 @@ export async function registerVideoViewAction(
   revalidatePath("/perfil");
 
   return { ok: true, xpAwarded, badges: [] };
+}
+
+const submitOrderStepsSchema = z.object({
+  techniqueSlug: z.string().trim().min(1).max(80),
+  blockStart: z.number().int().min(0).max(10_000),
+  orderedIds: z.array(z.string().trim().min(1).max(64)).min(1).max(20),
+});
+
+export type SubmitOrderStepsResult =
+  | {
+      score: number;
+      passed: boolean;
+      passScore: number;
+      correctIds: string[];
+      xpAwarded: number;
+      badges: EarnedBadge[];
+    }
+  | { error: string };
+
+export async function submitOrderStepsAction(
+  input: unknown,
+): Promise<SubmitOrderStepsResult> {
+  const user = await requireUser();
+  const parsed = submitOrderStepsSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: "No pudimos revisar tu orden. Probá de nuevo." };
+  }
+
+  const { techniqueSlug, blockStart, orderedIds } = parsed.data;
+
+  const technique = await prisma.technique.findFirst({
+    where: { slug: techniqueSlug, published: true },
+    select: {
+      id: true,
+      slug: true,
+      steps: { orderBy: { order: "asc" }, select: { id: true } },
+      activities: {
+        where: { type: "ORDER_STEPS" },
+        take: 1,
+        select: { id: true, passScore: true, config: true },
+      },
+    },
+  });
+
+  const activity = technique?.activities[0];
+  if (!technique || !activity) {
+    return { error: "El juego no está disponible para esta técnica." };
+  }
+
+  const correctIds = blockStepIds(
+    technique.steps,
+    blockStart,
+    blockSizeFromConfig(activity.config),
+  );
+
+  if (!correctIds || !isValidProposedOrder(orderedIds, correctIds)) {
+    return { error: "El orden enviado no coincide con el bloque del juego." };
+  }
+
+  const score = scoreOrder(orderedIds, correctIds);
+  const passed = score >= activity.passScore;
+  const correctIndex = new Map(correctIds.map((id, index) => [id, index]));
+  const sequence = orderedIds
+    .map((id) => correctIndex.get(id))
+    .filter((value): value is number => value !== undefined);
+
+  const outcome = await prisma.$transaction(async (tx) => {
+    await tx.activityAttempt.create({
+      data: {
+        userId: user.id,
+        activityId: activity.id,
+        score,
+        passed,
+        detail: {
+          blockStart,
+          blockIds: correctIds,
+          proposedIds: orderedIds,
+          lis: lisLength(sequence),
+        },
+      },
+    });
+
+    let xpAwarded = 0;
+
+    if (passed) {
+      xpAwarded += await awardXp(tx, {
+        userId: user.id,
+        amount: XP.PASS,
+        reason: "Aprobaste Ordená los pasos",
+        refKey: passRefKey(activity.id),
+      });
+    }
+
+    if (score === 100) {
+      xpAwarded += await awardXp(tx, {
+        userId: user.id,
+        amount: XP.PERFECT,
+        reason: "100% en Ordená los pasos",
+        refKey: perfectRefKey(activity.id),
+      });
+    }
+
+    const badgeResult = await evaluateBadges(tx, user.id);
+
+    return {
+      xpAwarded: xpAwarded + badgeResult.xpAwarded,
+      badges: badgeResult.badges,
+    };
+  });
+
+  revalidatePath("/inicio");
+  revalidatePath(`/tecnicas/${technique.slug}`);
+  revalidatePath("/perfil");
+
+  return {
+    score,
+    passed,
+    passScore: activity.passScore,
+    correctIds,
+    ...outcome,
+  };
 }
