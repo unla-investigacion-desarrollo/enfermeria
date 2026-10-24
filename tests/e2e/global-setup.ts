@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { seedBadges, seedTechnique } from "../../prisma/seed-technique";
 
 const prisma = new PrismaClient();
 
@@ -41,6 +42,9 @@ async function upsertTestUser(input: {
 export default async function globalSetup() {
   // Limpia estudiantes creados por corridas e2e anteriores.
   await prisma.user.deleteMany({ where: { email: { startsWith: "e2e." } } });
+
+  await seedBadges(prisma);
+  await seedTechnique(prisma);
 
   await upsertTestUser({
     email: "admin.e2e@unla.edu.ar",

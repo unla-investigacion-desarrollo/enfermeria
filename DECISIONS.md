@@ -73,3 +73,41 @@ más simple y se anota acá.
 24. **Datos de e2e:** los estudiantes creados por tests usan el prefijo `e2e.` y
     se borran al inicio de cada corrida. Los usuarios fijos de test se
     re-siembran con bcrypt cost 4.
+
+## Fase 4
+
+25. **Seed idempotente que reemplaza el contenido.** `seedTechnique` hace upsert de
+    la técnica por `slug` y, dentro de una transacción, borra y recrea objetivos,
+    materiales, pasos, imágenes, videos y check list. Conserva el `id` (y por lo
+    tanto el progreso asociado) y la `version`; el seed no publica cambios por sí
+    solo si la técnica ya existe.
+26. **El seed también siembra insignias y actividades.** Las insignias base
+    (`FIRST_READING`, `REVIEWER`, `ORDERED_MIND`, `TRIVIA_STAR`) y `MASTER_<slug>`
+    se crean con `upsert` por `code`; las actividades de la técnica se recrean
+    junto con el contenido. `tests/e2e/global-setup.ts` llama a las mismas
+    funciones para que la base de e2e quede igual que la de desarrollo.
+27. **Versionado:** guardar una técnica ya publicada incrementa `version` en 1 en
+    la misma transacción. Crear un borrador deja `version = 1`; publicar o
+    despublicar no cambia la versión. La UI muestra `Publicada · vN` o
+    `Borrador · vN`.
+28. **Edición en un solo formulario con listas ordenables por botones ↑ ↓.**
+    Se evita drag & drop en el editor para mantener accesibilidad por teclado y
+    simplicidad; el orden se envía como arrays y el servidor lo persiste con
+    `order` secuencial.
+29. **Subida de imágenes detrás de `StorageService`.** Implementación local que
+    valida MIME real por extensión declarada, tamaño ≤ 5 MB y tipo
+    JPEG/PNG/WebP; el nombre lo genera el servidor con UUID y se escribe en
+    `public/uploads`. Cambiar a S3/objeto solo requiere otra implementación de la
+    interfaz. El texto alternativo y el crédito son obligatorios en el schema.
+30. **Vista previa en `/admin/tecnicas/[id]/preview`** usando el mismo componente
+    de lectura que verá el estudiante (`components/technique/technique-content`).
+    No registra progreso ni XP y sirve también para borradores.
+31. **Videos solo de YouTube** validados con `lib/validation/techniques.ts` y
+    embebidos con `youtube-nocookie.com`; un enlace inválido se muestra como
+    error visible en la vista de lectura en lugar de romper la página.
+32. **La ruta de preguntas queda como placeholder** en `/admin/tecnicas/[id]/preguntas`
+    hasta la Fase 8, para que el editor ya tenga el acceso y no haya que cambiar
+    la navegación después.
+33. **Sincronización de estado del editor.** Tras guardar o publicar, el cliente
+    sincroniza `version` y `published` con lo que devuelve el servidor sin pisar
+    los campos que la persona está editando.

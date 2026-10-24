@@ -158,11 +158,11 @@ CSP y headers básicos.
 
 ### Fase 4 — Contenido: técnicas
 
-- [ ] `prisma/seed-data/via-periferica.json` (Apéndice A) y seed publicado con actividades e insignias.
-- [ ] Listado y editor admin con listas ordenables y vista previa.
-- [ ] Subida de imágenes vía `StorageService`.
-- [ ] Versionado al editar contenido publicado.
-- [ ] Aceptación: seed completo (29 pasos, 6 materiales, 15 ítems); editar/reordenar/publicar sube versión.
+- [x] `prisma/seed-data/via-periferica.json` (Apéndice A) y seed publicado con actividades e insignias.
+- [x] Listado y editor admin con listas ordenables y vista previa.
+- [x] Subida de imágenes vía `StorageService`.
+- [x] Versionado al editar contenido publicado.
+- [x] Aceptación: seed completo (29 pasos, 6 materiales, 15 ítems); editar/reordenar/publicar sube versión.
 
 ### Fase 5 — Estudiante: inicio y lectura
 

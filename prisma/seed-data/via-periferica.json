@@ -1,0 +1,116 @@
+{
+  "slug": "via-periferica-adulto",
+  "title": "Colocación de vía periférica en adulto",
+  "summary": "Canalización de una vía venosa periférica en simulador con técnica aséptica.",
+  "definition": "La colocación de una vía venosa periférica consiste en insertar un catéter corto y biocompatible en una vena superficial, generalmente del miembro superior, con fines terapéuticos o diagnósticos. Esta técnica permite administrar medicamentos, soluciones intravenosas, hemoderivados o nutrición parenteral. Es un procedimiento frecuente en unidades hospitalarias y de emergencia. Requiere valoración anatómica, técnica aséptica y monitoreo continuo. Su correcta ejecución desarrolla en el estudiante de enfermería las competencias técnicas, éticas y comunicacionales necesarias para realizar la canalización de una vía venosa periférica en simulador, respetando los estándares de seguridad del paciente y buenas prácticas clínicas.",
+  "published": true,
+  "objectives": [
+    { "kind": "SPECIFIC", "text": "Aplicar técnica aséptica y criterios de selección venosa." },
+    { "kind": "SPECIFIC", "text": "Ejecutar el procedimiento completo en simulador sin errores críticos." },
+    { "kind": "SPECIFIC", "text": "Reconocer signos de complicaciones y registrar adecuadamente la intervención." }
+  ],
+  "materials": [
+    "Catéter venoso periférico (calibre 22 o 24 para simulador).",
+    "Guantes de examinación y contenedor de punzocortantes.",
+    "Torundas de algodón con alcohol al 70%.",
+    "Antiséptico (clorhexidina o povidona).",
+    "Cinta adhesiva, suero fisiológico y guía de suero.",
+    "Rótulos para suero, guía y venoclisis."
+  ],
+  "steps": [
+    { "text": "Verificar la indicación, la prescripción, el tipo de solución, los aditivos, la velocidad de infusión, la identificación del sujeto de atención, las alergias y la fecha de vencimiento e integridad de los insumos." },
+    { "text": "Realizar lavado de manos clínico según protocolo institucional.", "emphasis": true },
+    { "text": "Limpiar y desinfectar la bandeja si corresponde; dejarla secar." },
+    { "text": "Preparar la bandeja con catéter venoso periférico, solución indicada, guía de suero, antiséptico institucional, torundas, lazo, guantes de examinación, apósito transparente estéril o sistema de fijación, cinta, rótulos y contenedor para punzocortantes. Mantener los insumos estériles cerrados hasta su uso." },
+    { "text": "Confeccionar los rótulos, solución, la guía y la venoclisis con la información solicitada por la institución: identificación, solución o aditivos, fecha y hora, calibre y sitio, y firma o iniciales." },
+    { "text": "Higienizar el envase de la solución si se encuentra visiblemente sucio, secar y cortar." },
+    { "text": "Abrir el envoltorio de la guía de suero, colocar si va a utilizar prolongador, regulador de flujo o llave de vías y conectar la guía al suero sin contaminar sus extremos." },
+    { "text": "Purgar completamente la guía, manteniendo protegido el extremo distal y verificando la ausencia de aire, cerrar el regulador y colocar el equipo preparado en la bandeja." },
+    { "text": "Ingresar a la unidad, saludar, presentarse y confirmar la identidad del sujeto de atención." },
+    { "text": "Explicar el procedimiento, comprobar la comprensión, solicitar consentimiento o colaboración y preservar la intimidad y comodidad." },
+    { "text": "Colocar la bandeja en una superficie limpia y segura; disponer el contenedor de punzocortantes al alcance y colgar la solución purgada en el pie de suero." },
+    { "text": "Valorar el estado general y la capacidad de comprender y colaborar." },
+    { "text": "Valorar ambos miembros superiores a través de la observación y palpación: integridad de la piel, circulación, movilidad, dolor, edema, hematomas, flebitis, infección, fístula arteriovenosa, mastectomía o vaciamiento ganglionar, lesiones y dispositivos previos. Evitar zonas contraindicadas." },
+    { "text": "Colocar el lazo, por el sitio más distal aproximadamente 7 a 10 cm por encima del sitio elegido y pedir que abra y cierre suavemente la mano." },
+    { "text": "Palpar nuevamente la vena sin guante. Elegir el catéter compatible con la terapia de infusión; en simulación utilizar calibre 22 o 24 según el material." },
+    { "text": "Realizar higiene de manos con preparación alcohólica y colocarse guantes de examinación.", "emphasis": true },
+    { "text": "Aplicar el antiséptico indicado mediante fricción desde el centro hacia la periferia, respetando el tiempo de contacto y dejando secar por completo. No soplar, abanicar ni volver a palpar la zona." },
+    { "text": "Abrir el catéter inmediatamente antes de usarlo, comprobar su integridad y mantener el bisel hacia arriba. No tocar las partes estériles." },
+    { "text": "Introducir el catéter con un ángulo aproximado de 10° a 30°, ajustado a la profundidad de la vena." },
+    { "text": "Observar retorno sanguíneo, disminuir el ángulo, avanzar unos milímetros si corresponde y luego progresar únicamente el catéter. No reintroducir ni avanzar la aguja dentro del catéter." },
+    { "text": "Soltar el lazo, esperar unos segundos y ocluir suavemente la vena por encima de la punta del catéter, sin presionar sobre el sitio de punción." },
+    { "text": "Retirar la aguja recta y desecharla de inmediato, sin reencapuchar, en el contenedor de punzocortantes." },
+    { "text": "Conectar la guía purgada mediante técnica aséptica y abrir lentamente el regulador de la guía de suero, iniciar una infusión continua, comprobar la permeabilidad de la venoclisis." },
+    { "text": "Fijar el catéter; en este momento y si la técnica lo permite se puede sacar un guante o ambos. Fijar con Tegaderm o gasa estéril y cintas según protocolo de la institución." },
+    { "text": "Colocar rótulo a la guía y suero." },
+    { "text": "Regular la velocidad prescrita. Contar las gotas durante un minuto con reloj o configurar la bomba de infusión si corresponde; comprobar el factor de goteo del equipo." },
+    { "text": "Dejar al sujeto de atención cómodo. Explicar que debe avisar si presenta dolor, ardor, humedad, hinchazón, enrojecimiento o alarma del equipo." },
+    { "text": "Desechar los residuos en los recipientes correspondientes y realizar higiene de manos." },
+    { "text": "Registrar en la hoja de enfermería: fecha y hora, indicación, sitio y lado, vena si se identifica, calibre y número de intentos, solución y velocidad, respuesta del sujeto, características del sitio, tipo de fijación y educación brindada." }
+  ],
+  "images": [
+    {
+      "url": "/uploads/placeholder-anatomia-1.jpg",
+      "alt": "Ilustración de las venas del antebrazo para punción",
+      "credit": "Pinterest. (s.f.). [Imagen de cateterismo venoso periférico]. Recuperado el 6 de marzo de 2026, de https://i.pinimg.com/564x/0d/cf/41/0dcf418b3ba54531504d2feca2a43345.jpg"
+    },
+    {
+      "url": "/uploads/placeholder-anatomia-2.jpg",
+      "alt": "Ilustración de las venas del dorso de la mano",
+      "credit": "Pinterest. (s.f.). [Imagen de cateterismo venoso periférico]. Recuperado el 6 de marzo de 2026, de https://i.pinimg.com/564x/0d/cf/41/0dcf418b3ba54531504d2feca2a43345.jpg"
+    },
+    {
+      "url": "/uploads/placeholder-sim-1.jpg",
+      "alt": "Bandeja con los materiales preparados para la técnica",
+      "credit": "Imagen colocación de vía periférica en contexto de simulación clínica. (2026, 1 de marzo). Laboratorio de Simulación Clínica, Lanús. Material institucional."
+    },
+    {
+      "url": "/uploads/placeholder-sim-2.jpg",
+      "alt": "Colocación del catéter en el brazo del simulador",
+      "credit": "Imagen colocación de vía periférica en contexto de simulación clínica. (2026, 1 de marzo). Laboratorio de Simulación Clínica, Lanús. Material institucional."
+    },
+    {
+      "url": "/uploads/placeholder-sim-3.jpg",
+      "alt": "Fijación del catéter con apósito transparente",
+      "credit": "Imagen colocación de vía periférica en contexto de simulación clínica. (2026, 1 de marzo). Laboratorio de Simulación Clínica, Lanús. Material institucional."
+    }
+  ],
+  "videos": [
+    {
+      "title": "Colocación de venoclisis",
+      "url": "https://www.youtube.com/watch?v=E7rOztgH7Q8",
+      "institutional": false
+    }
+  ],
+  "checklist": [
+    "Verifica la indicación y la prescripción correspondiente.",
+    "Realiza higiene de manos según protocolo institucional.",
+    "Reúne y comprueba el material necesario para el procedimiento.",
+    "Identifica correctamente al paciente.",
+    "Explica el procedimiento y obtiene colaboración.",
+    "Selecciona el sitio de punción adecuado según valoración.",
+    "Coloca las medidas de bioseguridad correspondientes.",
+    "Prepara el sitio con antisepsia siguiendo normas vigentes.",
+    "Prepara el equipo de infusión manteniendo técnica aséptica.",
+    "Realiza la punción venosa según técnica institucional.",
+    "Verifica la permeabilidad del acceso venoso.",
+    "Fija el catéter de manera segura y adecuada.",
+    "Conecta el sistema de infusión indicado.",
+    "Regula el flujo según la prescripción.",
+    "Registra el procedimiento y realiza monitoreo inicial del sitio."
+  ],
+  "activities": [
+    {
+      "type": "ORDER_STEPS",
+      "title": "Ordená los pasos",
+      "passScore": 80,
+      "config": { "blockSize": 8 }
+    },
+    {
+      "type": "TRIVIA",
+      "title": "Trivia de vía periférica",
+      "passScore": 70,
+      "config": { "questionCount": 10 }
+    }
+  ]
+}

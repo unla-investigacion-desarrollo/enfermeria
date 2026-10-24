@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { hashPassword } from "../lib/auth/password";
+import { seedBadges, seedTechnique } from "./seed-technique";
 
 const prisma = new PrismaClient();
 
@@ -36,7 +37,11 @@ async function main() {
     },
   });
 
+  await seedBadges(prisma);
+  await seedTechnique(prisma);
+
   console.log(`Admin asegurado: ${email}`);
+  console.log("Técnica de vía periférica cargada.");
 }
 
 main()
