@@ -207,3 +207,46 @@ más simple y se anota acá.
 55. **Página del juego en `/tecnicas/[slug]/jugar/ordenar`**, enlazada desde el
     inicio y la lectura. Un usuario `jugador.e2e` con progreso limpio por corrida
     verifica el recorrido sin interferir con el de lectura.
+
+## Fase 8
+
+56. **El banco del Apéndice B no estaba disponible.** No se inventó contenido
+    clínico: `prisma/seed-data/via-periferica.json` incluye `questions: []` con
+    `TODO(enfermería)` documentado en `prisma/seed-data/README.md`. El seed solo
+    reemplaza el banco cuando la lista trae preguntas; si está vacía, conserva
+    las que se carguen desde el panel. Las preguntas del seed quedan con
+    `reviewed = false` salvo que el JSON indique lo contrario.
+57. **Selección y mezcla deterministas por semilla.** La página genera un
+    `seed` (UUID), elige `questionCount` preguntas activas al azar y mezcla las
+    opciones con un PRNG sembrado por `seed + id`. El servidor recalcula la misma
+    selección y el mismo orden al corregir, así el cliente no puede enviar un
+    subconjunto más chico ni inventar preguntas.
+58. **La respuesta correcta y la explicación nunca viajan antes de responder.**
+    El cliente recibe solo `{ id, prompt, options, reviewed }`; la corrección se
+    hace exclusivamente en `submitTriviaAction`. El resultado devuelve, recién
+    después del envío, la opción elegida, la correcta y la explicación de cada
+    pregunta.
+59. **Un intento guarda todo en `detail`:** `seed`, `questionIds`, `correctCount`
+    y por respuesta `questionId`, `chosenIdx`, `correctIdx` y `correct`. El
+    puntaje es `round(correctas / total * 100)` y se aprueba con el `passScore`
+    de la actividad (70 en el seed).
+60. **XP de trivia con las mismas claves que ordenar:** `PASS:<activityId>`
+    (150) la primera aprobación y `PERFECT:<activityId>` (50) el primer 100%.
+    Aprobar de nuevo guarda el intento pero no repite XP. `evaluateBadges` corre
+    en la misma transacción, por lo que el 100% otorga `TRIVIA_STAR` y la trivia
+    aprobada, junto con lectura y ordenar, otorga `MASTER_<slug>` + 200 XP.
+61. **Juego de una pregunta por pantalla.** Se responde todo y se envía al
+    final; los controles permiten volver atrás antes de enviar. El resultado
+    muestra tu respuesta, la correcta, la explicación y una advertencia en las
+    preguntas con `reviewed = false`.
+62. **CRUD de preguntas en `/admin/tecnicas/[id]/preguntas`.** Un único
+    formulario sirve para alta y edición: enunciado, 2–6 opciones, radio de la
+    correcta, explicación y checkboxes de revisada/activa. El listado permite
+    activar, desactivar, marcar revisión y eliminar. Se advierte cuando hay
+    preguntas activas sin revisar o menos activas que las que pide la trivia.
+63. **E2E con preguntas ficticias.** El banco del Apéndice B no existe todavía,
+    así que `tests/e2e/trivia-fixtures.ts` crea diez preguntas genéricas con
+    prefijo `[e2e]`, desactiva temporalmente preguntas reales y las restaura al
+    final. El test verifica que `correctIdx`/`explanation` no estén en el HTML
+    antes de responder y usa usuarios `trivia.e2e` y `master.e2e` con progreso
+    limpio por corrida.

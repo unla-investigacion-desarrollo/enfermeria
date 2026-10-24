@@ -11,8 +11,19 @@ import {
   lisLength,
   scoreOrder,
 } from "@/lib/games/order-steps";
+import {
+  MIN_OPTIONS,
+  correctTrivia,
+  parseOptions,
+  questionCountFromConfig,
+  scoreTrivia,
+  selectTriviaQuestions,
+  type TriviaQuestionData,
+  type TriviaReviewItem,
+} from "@/lib/games/trivia";
 import { evaluateBadges } from "@/lib/gamification/badges";
 import type { EarnedBadge } from "@/lib/gamification/types";
+import { triviaSubmissionSchema } from "@/lib/validation/trivia";
 import {
   awardXp,
   passRefKey,
@@ -283,6 +294,171 @@ export async function submitOrderStepsAction(
     passed,
     passScore: activity.passScore,
     correctIds,
+    ...outcome,
+  };
+}
+
+export type SubmitTriviaResult =
+  | {
+      score: number;
+      passed: boolean;
+      passScore: number;
+      correctCount: number;
+      total: number;
+      questions: TriviaReviewItem[];
+      xpAwarded: number;
+      badges: EarnedBadge[];
+    }
+  | { error: string };
+
+/**
+ * Corrige la trivia en el servidor. La selección de preguntas se recalcula a
+ * partir de la semilla: el cliente no puede enviar un subconjunto más chico ni
+ * inventar preguntas para subir el puntaje.
+ */
+export async function submitTriviaAction(input: unknown): Promise<SubmitTriviaResult> {
+  const user = await requireUser();
+  const parsed = triviaSubmissionSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: "No pudimos revisar tu trivia. Probá de nuevo." };
+  }
+
+  const { techniqueSlug, seed, answers } = parsed.data;
+
+  const technique = await prisma.technique.findFirst({
+    where: { slug: techniqueSlug, published: true },
+    select: {
+      id: true,
+      slug: true,
+      activities: {
+        where: { type: "TRIVIA" },
+        take: 1,
+        select: { id: true, passScore: true, config: true },
+      },
+      questions: {
+        where: { active: true },
+        select: {
+          id: true,
+          prompt: true,
+          options: true,
+          correctIdx: true,
+          explanation: true,
+          reviewed: true,
+        },
+      },
+    },
+  });
+
+  const activity = technique?.activities[0];
+  if (!technique || !activity) {
+    return { error: "La trivia no está disponible para esta técnica." };
+  }
+
+  const bank: TriviaQuestionData[] = technique.questions
+    .map((question) => ({
+      id: question.id,
+      prompt: question.prompt,
+      options: parseOptions(question.options),
+      correctIdx: question.correctIdx,
+      explanation: question.explanation,
+      reviewed: question.reviewed,
+    }))
+    .filter(
+      (question) =>
+        question.options.length >= MIN_OPTIONS &&
+        question.correctIdx >= 0 &&
+        question.correctIdx < question.options.length,
+    );
+
+  const selected = selectTriviaQuestions(
+    bank,
+    questionCountFromConfig(activity.config),
+    seed,
+  );
+
+  if (selected.length === 0) {
+    return { error: "La trivia todavía no tiene preguntas cargadas." };
+  }
+
+  const answerIds = new Set(answers.map((answer) => answer.questionId));
+  const selectedIds = new Set(selected.map((question) => question.id));
+  const complete =
+    answerIds.size === answers.length &&
+    answerIds.size === selectedIds.size &&
+    [...selectedIds].every((id) => answerIds.has(id));
+
+  if (!complete) {
+    return {
+      error: "Las preguntas de la trivia cambiaron. Recargá la página y volvé a intentarlo.",
+    };
+  }
+
+  const corrections = correctTrivia(selected, answers, seed);
+  const correctCount = corrections.filter((correction) => correction.correct).length;
+  const score = scoreTrivia(correctCount, selected.length);
+  const passed = score >= activity.passScore;
+
+  const outcome = await prisma.$transaction(async (tx) => {
+    await tx.activityAttempt.create({
+      data: {
+        userId: user.id,
+        activityId: activity.id,
+        score,
+        passed,
+        detail: {
+          seed,
+          questionIds: selected.map((question) => question.id),
+          correctCount,
+          answers: corrections.map((correction) => ({
+            questionId: correction.item.id,
+            chosenIdx: correction.item.chosenIdx,
+            correctIdx: correction.item.correctIdx,
+            correct: correction.correct,
+          })),
+        },
+      },
+    });
+
+    let xpAwarded = 0;
+
+    if (passed) {
+      xpAwarded += await awardXp(tx, {
+        userId: user.id,
+        amount: XP.PASS,
+        reason: "Aprobaste la trivia",
+        refKey: passRefKey(activity.id),
+      });
+    }
+
+    if (score === 100) {
+      xpAwarded += await awardXp(tx, {
+        userId: user.id,
+        amount: XP.PERFECT,
+        reason: "100% en la trivia",
+        refKey: perfectRefKey(activity.id),
+      });
+    }
+
+    const badgeResult = await evaluateBadges(tx, user.id);
+
+    return {
+      xpAwarded: xpAwarded + badgeResult.xpAwarded,
+      badges: badgeResult.badges,
+    };
+  });
+
+  revalidatePath("/inicio");
+  revalidatePath(`/tecnicas/${technique.slug}`);
+  revalidatePath(`/tecnicas/${technique.slug}/jugar/trivia`);
+  revalidatePath("/perfil");
+
+  return {
+    score,
+    passed,
+    passScore: activity.passScore,
+    correctCount,
+    total: selected.length,
+    questions: corrections.map((correction) => correction.item),
     ...outcome,
   };
 }

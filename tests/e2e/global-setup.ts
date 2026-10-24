@@ -43,6 +43,9 @@ export default async function globalSetup() {
   // Limpia estudiantes creados por corridas e2e anteriores.
   await prisma.user.deleteMany({ where: { email: { startsWith: "e2e." } } });
 
+  // Las preguntas de prueba de la trivia se recrean en cada corrida.
+  await prisma.triviaQuestion.deleteMany({ where: { prompt: { startsWith: "[e2e]" } } });
+
   await seedBadges(prisma);
   await seedTechnique(prisma);
 
@@ -107,11 +110,38 @@ export default async function globalSetup() {
     mustChangePassword: false,
   });
 
+  await upsertTestUser({
+    email: "trivia.e2e@unla.edu.ar",
+    dni: "77777777",
+    firstName: "Trivia",
+    lastName: "E2E",
+    password: "Trivia1234!",
+    role: "STUDENT",
+    mustChangePassword: false,
+  });
+
+  await upsertTestUser({
+    email: "master.e2e@unla.edu.ar",
+    dni: "88888888",
+    firstName: "Maestra",
+    lastName: "E2E",
+    password: "Master1234!",
+    role: "STUDENT",
+    mustChangePassword: false,
+  });
+
   // Los recorridos de lectura y juegos deben arrancar sin progreso para poder
   // contar registros y XP de forma determinista en cada corrida.
   const progressUsers = await prisma.user.findMany({
     where: {
-      email: { in: ["lector.e2e@unla.edu.ar", "jugador.e2e@unla.edu.ar"] },
+      email: {
+        in: [
+          "lector.e2e@unla.edu.ar",
+          "jugador.e2e@unla.edu.ar",
+          "trivia.e2e@unla.edu.ar",
+          "master.e2e@unla.edu.ar",
+        ],
+      },
     },
     select: { id: true },
   });

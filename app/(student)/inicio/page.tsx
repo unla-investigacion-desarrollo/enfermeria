@@ -31,6 +31,7 @@ export default async function InicioPage({ searchParams }: PageProps) {
       include: {
         _count: { select: { steps: true, images: true, videos: true } },
         activities: { orderBy: { type: "asc" } },
+        questions: { where: { active: true }, select: { id: true } },
       },
     }),
     getLatestReadings(user.id),
@@ -214,6 +215,19 @@ export default async function InicioPage({ searchParams }: PageProps) {
                       >
                         Jugar
                       </Link>
+                    ) : activity.type === "TRIVIA" ? (
+                      featured.questions.length > 0 ? (
+                        <Link
+                          href={`/tecnicas/${featured.slug}/jugar/trivia`}
+                          className={buttonVariants({ size: "sm" })}
+                        >
+                          Jugar
+                        </Link>
+                      ) : (
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                          Sin preguntas
+                        </span>
+                      )
                     ) : (
                       <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
                         Próximamente

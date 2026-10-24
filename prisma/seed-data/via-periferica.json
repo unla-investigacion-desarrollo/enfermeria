@@ -112,5 +112,6 @@
       "passScore": 70,
       "config": { "questionCount": 10 }
     }
-  ]
+  ],
+  "questions": []
 }

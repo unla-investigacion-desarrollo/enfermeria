@@ -14,11 +14,11 @@ gamificado.
 - [x] Ejecutar una fase por vez, en orden, sin avanzar hasta cumplir la aceptación.
 - [x] Al cerrar cada fase: `npm run lint`, `npm run typecheck`, `npm test` y commit
       `feat(fase-N): <resumen>`.
-- [ ] Mantener este archivo actualizado con las tareas completadas.
-- [ ] No inventar contenido clínico: usar Apéndices A y B. Si falta algo, dejar
+- [x] Mantener este archivo actualizado con las tareas completadas.
+- [x] No inventar contenido clínico: usar Apéndices A y B. Si falta algo, dejar
       `TODO(enfermería)`.
-- [ ] Decisiones no cubiertas: la opción más simple, registrada en `DECISIONS.md`.
-- [ ] Interfaz en español rioplatense (vos), mobile-first.
+- [x] Decisiones no cubiertas: la opción más simple, registrada en `DECISIONS.md`.
+- [x] Interfaz en español rioplatense (vos), mobile-first.
 
 ## 1. Alcance
 
@@ -189,11 +189,12 @@ CSP y headers básicos.
 
 ### Fase 8 — Juego: Trivia
 
-- [ ] Seed de preguntas del Apéndice B (`reviewed = false`).
-- [ ] CRUD de preguntas en admin.
-- [ ] Juego con corrección en servidor y explicación por pregunta.
-- [ ] Guardar intento, XP, insignias y `MASTERED`.
-- [ ] Aceptación: la respuesta correcta no llega antes de responder; lectura + ordenar + trivia otorga insignia y +200 XP.
+- [x] Seed preparado para las preguntas del Apéndice B (`questions: []` con
+      `TODO(enfermería)`; `reviewed = false` por defecto).
+- [x] CRUD de preguntas en admin.
+- [x] Juego con corrección en servidor y explicación por pregunta.
+- [x] Guardar intento, XP, insignias y `MASTERED`.
+- [x] Aceptación: la respuesta correcta no llega antes de responder; lectura + ordenar + trivia otorga insignia y +200 XP.
 
 ### Fase 9 — Pulido y entrega
 

@@ -39,7 +39,7 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
 
   if (!technique) notFound();
 
-  const [latestReading, videoViews] = await Promise.all([
+  const [latestReading, videoViews, activeTriviaQuestions] = await Promise.all([
     prisma.readingCompletion.findFirst({
       where: { userId: user.id, techniqueId: technique.id },
       orderBy: { completedAt: "desc" },
@@ -52,10 +52,14 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
       },
       select: { videoId: true },
     }),
+    prisma.triviaQuestion.count({
+      where: { techniqueId: technique.id, active: true },
+    }),
   ]);
 
   const state = readingState(latestReading?.version, technique.version);
   const readCurrentVersion = state === "read";
+  const triviaAvailable = activeTriviaQuestions > 0;
 
   const sections = [
     { id: "definicion", label: "Definición" },
@@ -120,7 +124,7 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
         <section id="juegos" className="scroll-mt-24 space-y-3">
           <h2 className="border-b border-border pb-2 text-xl font-bold text-navy">Juegos</h2>
           <p className="text-sm text-muted-foreground">
-            Poné a prueba lo que aprendiste. Los juegos se habilitan en la próxima etapa.
+            Poné a prueba lo que aprendiste. Podés repetir los juegos las veces que quieras.
           </p>
           <ul className="grid gap-3 sm:grid-cols-2">
             {technique.activities.map((activity) => (
@@ -146,6 +150,19 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
                   >
                     Jugar ahora
                   </Link>
+                ) : activity.type === "TRIVIA" ? (
+                  triviaAvailable ? (
+                    <Link
+                      href={`/tecnicas/${technique.slug}/jugar/trivia`}
+                      className={buttonVariants({ size: "sm" })}
+                    >
+                      Jugar ahora
+                    </Link>
+                  ) : (
+                    <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                      Sin preguntas todavía
+                    </span>
+                  )
                 ) : (
                   <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
                     Próximamente

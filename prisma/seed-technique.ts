@@ -41,6 +41,15 @@ export async function seedBadges(prisma: PrismaClient): Promise<void> {
   }
 }
 
+type SeedQuestion = {
+  prompt: string;
+  options: string[];
+  correctIdx: number;
+  explanation: string;
+  reviewed?: boolean;
+  active?: boolean;
+};
+
 export async function seedTechnique(prisma: PrismaClient): Promise<void> {
   const technique = await prisma.technique.upsert({
     where: { slug: data.slug },
@@ -135,6 +144,28 @@ export async function seedTechnique(prisma: PrismaClient): Promise<void> {
         config: activity.config as Prisma.InputJsonValue,
       },
     });
+  }
+
+  // TODO(enfermería): cargar el banco del Apéndice B en `questions`.
+  // Mientras la lista esté vacía no se toca lo que se haya cargado desde el
+  // panel de administración. Si el seed trae preguntas, reemplaza el banco.
+  const seedQuestions = data.questions as SeedQuestion[];
+
+  if (seedQuestions.length > 0) {
+    await prisma.$transaction([
+      prisma.triviaQuestion.deleteMany({ where: { techniqueId: technique.id } }),
+      prisma.triviaQuestion.createMany({
+        data: seedQuestions.map((question) => ({
+          techniqueId: technique.id,
+          prompt: question.prompt,
+          options: question.options,
+          correctIdx: question.correctIdx,
+          explanation: question.explanation,
+          reviewed: question.reviewed ?? false,
+          active: question.active ?? true,
+        })),
+      }),
+    ]);
   }
 
   await prisma.badge.upsert({
