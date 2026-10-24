@@ -87,5 +87,30 @@ export default async function globalSetup() {
     mustChangePassword: false,
   });
 
+  await upsertTestUser({
+    email: "lector.e2e@unla.edu.ar",
+    dni: "55555555",
+    firstName: "Lectora",
+    lastName: "E2E",
+    password: "Lector1234!",
+    role: "STUDENT",
+    mustChangePassword: false,
+  });
+
+  // El recorrido de lectura debe arrancar sin progreso para poder contar
+  // registros y XP de forma determinista en cada corrida.
+  const reader = await prisma.user.findUnique({
+    where: { email: "lector.e2e@unla.edu.ar" },
+    select: { id: true },
+  });
+
+  if (reader) {
+    await prisma.userBadge.deleteMany({ where: { userId: reader.id } });
+    await prisma.activityAttempt.deleteMany({ where: { userId: reader.id } });
+    await prisma.videoView.deleteMany({ where: { userId: reader.id } });
+    await prisma.readingCompletion.deleteMany({ where: { userId: reader.id } });
+    await prisma.xpEvent.deleteMany({ where: { userId: reader.id } });
+  }
+
   await prisma.$disconnect();
 }

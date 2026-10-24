@@ -9,6 +9,7 @@ import type {
   Video,
 } from "@prisma/client";
 import { toEmbedUrl } from "@/lib/videos";
+import { VideoPlayer } from "@/components/technique/video-player";
 
 export type TechniqueWithContent = Technique & {
   objectives: Objective[];
@@ -21,7 +22,11 @@ export type TechniqueWithContent = Technique & {
 
 type Props = {
   technique: TechniqueWithContent;
+  showTitle?: boolean;
+  interactiveVideos?: boolean;
+  viewedVideoIds?: string[];
 };
+
 
 function Section({
   id,
@@ -40,18 +45,25 @@ function Section({
   );
 }
 
-export function TechniqueContent({ technique }: Props) {
+export function TechniqueContent({
+  technique,
+  showTitle = true,
+  interactiveVideos = false,
+  viewedVideoIds = [],
+}: Props) {
   const generalObjectives = technique.objectives.filter((item) => item.kind === "GENERAL");
   const specificObjectives = technique.objectives.filter((item) => item.kind === "SPECIFIC");
 
   return (
     <article className="space-y-8">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-bold text-navy sm:text-3xl">{technique.title}</h1>
-        {technique.summary ? (
-          <p className="text-sm text-muted-foreground">{technique.summary}</p>
-        ) : null}
-      </header>
+      {showTitle ? (
+        <header className="space-y-2">
+          <h1 className="text-2xl font-bold text-navy sm:text-3xl">{technique.title}</h1>
+          {technique.summary ? (
+            <p className="text-sm text-muted-foreground">{technique.summary}</p>
+          ) : null}
+        </header>
+      ) : null}
 
       <Section id="definicion" title="Definición">
         <p className="whitespace-pre-line text-[15px] leading-relaxed">{technique.definition}</p>
@@ -145,6 +157,21 @@ export function TechniqueContent({ technique }: Props) {
         <Section id="videos" title="Videos">
           <div className="space-y-6">
             {technique.videos.map((video) => {
+              if (interactiveVideos) {
+                return (
+                  <VideoPlayer
+                    key={video.id}
+                    video={{
+                      id: video.id,
+                      title: video.title,
+                      url: video.url,
+                      institutional: video.institutional,
+                    }}
+                    initialViewed={viewedVideoIds.includes(video.id)}
+                  />
+                );
+              }
+
               const embedUrl = toEmbedUrl(video.url);
               return (
                 <div key={video.id} className="space-y-2">

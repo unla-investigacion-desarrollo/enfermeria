@@ -166,11 +166,11 @@ CSP y headers básicos.
 
 ### Fase 5 — Estudiante: inicio y lectura
 
-- [ ] Inicio según sección 7 (buscador y progreso).
-- [ ] Lectura por secciones, imágenes con crédito, videos embebidos.
-- [ ] "Terminé la lectura" crea `ReadingCompletion` (también relecturas).
-- [ ] Registro de `VideoView` al reproducir.
-- [ ] Aceptación: e2e doble lectura → 2 registros y 100 XP (no 200).
+- [x] Inicio según sección 7 (buscador y progreso).
+- [x] Lectura por secciones, imágenes con crédito, videos embebidos.
+- [x] "Terminé la lectura" crea `ReadingCompletion` (también relecturas).
+- [x] Registro de `VideoView` al reproducir.
+- [x] Aceptación: e2e doble lectura → 2 registros y 100 XP (no 200).
 
 ### Fase 6 — Gamificación
 

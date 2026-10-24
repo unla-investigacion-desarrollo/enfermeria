@@ -4,6 +4,9 @@ export default defineConfig({
   testDir: "./tests/e2e",
   globalSetup: "./tests/e2e/global-setup.ts",
   fullyParallel: true,
+  // Toda la suite comparte una única base de datos: correr en serie evita que
+  // un test edite o despublique la técnica mientras otro la está leyendo.
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",

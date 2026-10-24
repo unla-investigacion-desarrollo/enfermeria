@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { BookOpen, Home, UserRound } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db/prisma";
 import { signOutAction } from "@/lib/auth/actions";
+import { StudentNav } from "@/components/student/student-nav";
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
@@ -41,41 +41,18 @@ export default async function StudentLayout({ children }: { children: React.Reac
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-24 pt-6">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-10 pt-6">{children}</main>
+
+      <footer className="border-t border-border bg-white px-4 pb-24 pt-6 text-center text-xs text-muted-foreground">
+        <p className="font-semibold text-navy">Universidad Nacional de Lanús</p>
+        <p className="mt-1">Licenciatura en Enfermería · Manual Digital de Técnicas</p>
+      </footer>
 
       <nav
         aria-label="Navegación principal"
         className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-white"
       >
-        <ul className="mx-auto flex max-w-5xl items-stretch justify-around">
-          <li className="flex-1">
-            <Link
-              href="/inicio"
-              className="flex flex-col items-center gap-1 px-2 py-2 text-xs font-medium text-navy"
-            >
-              <Home className="h-5 w-5" aria-hidden="true" />
-              Inicio
-            </Link>
-          </li>
-          <li className="flex-1">
-            <Link
-              href="/tecnicas"
-              className="flex flex-col items-center gap-1 px-2 py-2 text-xs font-medium text-muted-foreground"
-            >
-              <BookOpen className="h-5 w-5" aria-hidden="true" />
-              Técnicas
-            </Link>
-          </li>
-          <li className="flex-1">
-            <Link
-              href="/perfil"
-              className="flex flex-col items-center gap-1 px-2 py-2 text-xs font-medium text-muted-foreground"
-            >
-              <UserRound className="h-5 w-5" aria-hidden="true" />
-              Perfil
-            </Link>
-          </li>
-        </ul>
+        <StudentNav />
       </nav>
     </div>
   );

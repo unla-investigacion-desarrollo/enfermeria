@@ -111,3 +111,41 @@ más simple y se anota acá.
 33. **Sincronización de estado del editor.** Tras guardar o publicar, el cliente
     sincroniza `version` y `published` con lo que devuelve el servidor sin pisar
     los campos que la persona está editando.
+
+## Fase 5
+
+34. **Rutas de lectura:** `/inicio` (buscador, progreso, accesos rápidos y
+    evaluación), `/tecnicas` (listado publicado) y `/tecnicas/[slug]` (lectura).
+    Solo se muestran técnicas publicadas; un borrador responde 404. Las páginas
+    vuelven a validar la sesión con `requireUser` además del middleware.
+35. **Búsqueda por `?q=` con GET, sin estado en el cliente.** Se normalizan
+    mayúsculas y acentos y se exigen todas las palabras. Se filtra en memoria
+    porque el MVP tiene pocas técnicas; el parámetro se valida con Zod y se
+    limita a 80 caracteres.
+36. **Progreso = última `ReadingCompletion` contra la versión publicada.** Estados
+    `Sin leer`, `Leída` (última lectura de la versión actual) y `Nueva versión`
+    (quedó atrás). Se toma la lectura más reciente por técnica, sin importar
+    cuántas relecturas haya.
+37. **XP mínimo de lectura se adelanta a esta fase** porque la aceptación lo
+    exige. `lib/gamification/xp.ts` concentra montos, `refKey` y un `awardXp`
+    idempotente con `createMany({ skipDuplicates: true })`. La primera lectura
+    suma 100 XP; la primera lectura de una versión nueva suma 30; releer la misma
+    versión registra la lectura pero no suma XP. Niveles, insignias, perfil
+    gamificado y toast quedan para la Fase 6.
+38. **El botón "Terminé la lectura" es explícito**, no automático al llegar al
+    final: registra la lectura y permite relecturas. El avance de scroll es una
+    barra decorativa (`aria-hidden`) y el hito accesible es el botón.
+39. **`VideoView` se registra al tocar "Reproducir".** Un iframe de YouTube no
+    puede informar reproducciones de forma confiable entre dominios, así que el
+    video no se carga hasta la interacción; en ese momento se registra la vista
+    única y se embebe con `youtube-nocookie.com` y `autoplay`.
+40. **Server actions de lectura y video:** validan sesión, técnica/video publicado
+    e id con Zod. La lectura se guarda en una transacción junto con el XP y luego
+    se revalidan `/inicio`, `/tecnicas`, la técnica y `/perfil`.
+41. **La suite e2e corre con `workers: 1`.** Todos los tests comparten una única
+    base de datos y el test de contenido publica/despublica la técnica del seed;
+    serializar evita carreras con el test de lectura. Se agregó
+    `lector.e2e@unla.edu.ar` y su progreso se limpia en cada corrida.
+42. **Navegación inferior con estado activo** (`aria-current="page"`) y pie
+    institucional en el layout de estudiante. Los accesos rápidos del inicio
+    enlazan a las secciones de la técnica (`#imagenes`, `#videos`, `#juegos`).
