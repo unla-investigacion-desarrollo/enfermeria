@@ -305,3 +305,12 @@ más simple y se anota acá.
     los enlaces de la navegación administrativa. Con eso todas las pantallas
     auditadas quedan en Accesibilidad 100 y Buenas prácticas 100, salvo la
     lectura de la técnica (96 por el aviso informativo de CSP).
+75. **Aislamiento del e2e de edición de contenido.** La prueba que edita,
+    reordena y publica la técnica modificaba el seed de forma permanente (el
+    guardado reemplaza los pasos y cambia sus IDs). Ahora guarda un snapshot
+    antes de la prueba y lo restaura en `finally`, incluida la versión y el
+    estado de publicación; además el test de contenido contrasta texto,
+    materiales y checklist contra `prisma/seed-data/via-periferica.json` para
+    detectar cualquier deriva. El contenido clínico coincide con el documento
+    oficial provisto por Enfermería (definición, 3 objetivos, 6 materiales, 29
+    pasos, 15 ítems de check list y video E7rOztgH7Q8).
