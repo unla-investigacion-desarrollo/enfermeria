@@ -56,6 +56,8 @@ test("doble lectura registra dos lecturas y 100 XP", async ({ page }, testInfo) 
 
   await page.getByRole("button", { name: "Terminé la lectura" }).click();
   await expect(page.getByText(/Lectura registrada\. Sumaste 100 XP\./)).toBeVisible();
+  await expect(page.getByText("Sumaste 100 XP", { exact: true })).toBeVisible();
+  await expect(page.getByText("Nueva insignia:")).toBeVisible();
 
   const reread = page.getByRole("button", { name: "Registrar relectura" });
   await expect(reread).toBeVisible();
@@ -106,6 +108,22 @@ test("ver el video registra una visualización y 20 XP", async ({ page }, testIn
   // Al volver a entrar, la visualización sigue registrada.
   await page.reload();
   await expect(page.getByText("Visto", { exact: true })).toBeVisible();
+});
+
+test("el perfil muestra nivel, XP e insignias", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "El perfil se verifica en desktop");
+
+  await login(page);
+  await page.goto("/perfil");
+
+  await expect(page.getByRole("heading", { name: "Mi perfil" })).toBeVisible();
+  await expect(page.getByText("120 XP", { exact: true })).toBeVisible();
+  await expect(page.getByText("Ingresante", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Insignias" })).toBeVisible();
+  await expect(page.getByText("Primer paso", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Historial de XP" })).toBeVisible();
+  await expect(page.getByText("+100 XP")).toBeVisible();
+  await expect(page.getByText("+20 XP")).toBeVisible();
 });
 
 test.afterAll(async () => {

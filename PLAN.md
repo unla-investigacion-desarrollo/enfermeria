@@ -174,11 +174,11 @@ CSP y headers básicos.
 
 ### Fase 6 — Gamificación
 
-- [ ] `lib/gamification`: `awardXp`, `getLevel`, `evaluateBadges` con tests.
-- [ ] Integrar XP e insignias en lectura y videos.
-- [ ] Pantalla de perfil.
-- [ ] Toast de XP/insignia.
-- [ ] Aceptación: tests de niveles e idempotencia; perfil correcto.
+- [x] `lib/gamification`: `awardXp`, `getLevel`, `evaluateBadges` con tests.
+- [x] Integrar XP e insignias en lectura y videos.
+- [x] Pantalla de perfil.
+- [x] Toast de XP/insignia.
+- [x] Aceptación: tests de niveles e idempotencia; perfil correcto.
 
 ### Fase 7 — Juego: Ordenar los pasos
 

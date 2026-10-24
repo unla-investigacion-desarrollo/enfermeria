@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, Play } from "lucide-react";
+import { XpToast } from "@/components/gamification/xp-toast";
 import { registerVideoViewAction } from "@/app/(student)/tecnicas/actions";
+import type { ToastPayload } from "@/lib/gamification/types";
 import { toEmbedUrl } from "@/lib/videos";
 
 type Props = {
@@ -21,6 +23,7 @@ export function VideoPlayer({ video, initialViewed }: Props) {
   const [viewed, setViewed] = useState(initialViewed);
   const [xpAwarded, setXpAwarded] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastPayload | null>(null);
   const [pending, startTransition] = useTransition();
 
   if (!embedUrl) {
@@ -42,6 +45,9 @@ export function VideoPlayer({ video, initialViewed }: Props) {
       }
       setViewed(true);
       setXpAwarded(result.xpAwarded);
+      if (result.xpAwarded > 0) {
+        setToast({ id: Date.now(), amount: result.xpAwarded, badges: result.badges });
+      }
     });
   }
 
@@ -102,6 +108,8 @@ export function VideoPlayer({ video, initialViewed }: Props) {
           Este video no es material institucional de la UNLa; se incluye como apoyo.
         </p>
       ) : null}
+
+      <XpToast toast={toast} />
     </div>
   );
 }

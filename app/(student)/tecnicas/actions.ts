@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/guard";
+import { evaluateBadges } from "@/lib/gamification/badges";
+import type { EarnedBadge } from "@/lib/gamification/types";
 import {
   awardXp,
   readingFirstRefKey,
@@ -14,10 +16,12 @@ import {
 
 const idSchema = z.string().trim().min(1).max(64);
 
-type ReadingOutcome = { error: string } | { slug: string; xpAwarded: number };
+type ReadingOutcome =
+  | { error: string }
+  | { slug: string; readingXp: number; bonusXp: number; badges: EarnedBadge[] };
 
 export type CompleteReadingResult =
-  | { success: string; xpAwarded: number }
+  | { success: string; xpAwarded: number; badges: EarnedBadge[] }
   | { error: string };
 
 export async function completeReadingAction(
@@ -64,16 +68,16 @@ export async function completeReadingAction(
       },
     });
 
-    let xpAwarded = 0;
+    let readingXp = 0;
     if (previousReadings === 0) {
-      xpAwarded = await awardXp(tx, {
+      readingXp = await awardXp(tx, {
         userId: user.id,
         amount: XP.READING_FIRST,
         reason: "Primera lectura terminada",
         refKey: readingFirstRefKey(technique.id),
       });
     } else if (previousVersionReadings === 0) {
-      xpAwarded = await awardXp(tx, {
+      readingXp = await awardXp(tx, {
         userId: user.id,
         amount: XP.READING_VERSION,
         reason: `Lectura de la versión ${technique.version}`,
@@ -81,7 +85,14 @@ export async function completeReadingAction(
       });
     }
 
-    return { slug: technique.slug, xpAwarded } as const;
+    const badgeResult = await evaluateBadges(tx, user.id);
+
+    return {
+      slug: technique.slug,
+      readingXp,
+      bonusXp: badgeResult.xpAwarded,
+      badges: badgeResult.badges,
+    } as const;
   });
 
   if ("error" in outcome) return { error: outcome.error };
@@ -92,16 +103,22 @@ export async function completeReadingAction(
   revalidatePath("/perfil");
 
   let success = "Lectura registrada. Las relecturas no suman XP.";
-  if (outcome.xpAwarded === XP.READING_FIRST) {
+  if (outcome.readingXp === XP.READING_FIRST) {
     success = `Lectura registrada. Sumaste ${XP.READING_FIRST} XP.`;
-  } else if (outcome.xpAwarded === XP.READING_VERSION) {
+  } else if (outcome.readingXp === XP.READING_VERSION) {
     success = `Lectura registrada. Sumaste ${XP.READING_VERSION} XP por la nueva versión.`;
   }
 
-  return { success, xpAwarded: outcome.xpAwarded };
+  return {
+    success,
+    xpAwarded: outcome.readingXp + outcome.bonusXp,
+    badges: outcome.badges,
+  };
 }
 
-export type RegisterVideoViewResult = { ok: true; xpAwarded: number } | { error: string };
+export type RegisterVideoViewResult =
+  | { ok: true; xpAwarded: number; badges: EarnedBadge[] }
+  | { error: string };
 
 export async function registerVideoViewAction(
   videoId: string,
@@ -137,5 +154,5 @@ export async function registerVideoViewAction(
   revalidatePath(`/tecnicas/${video.technique.slug}`);
   revalidatePath("/perfil");
 
-  return { ok: true, xpAwarded };
+  return { ok: true, xpAwarded, badges: [] };
 }

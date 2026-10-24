@@ -4,6 +4,7 @@ export const XP = {
   READING_FIRST: 100,
   READING_VERSION: 30,
   VIDEO: 20,
+  MASTERED: 200,
 } as const;
 
 export function readingFirstRefKey(techniqueId: string): string {
@@ -16,6 +17,10 @@ export function readingVersionRefKey(techniqueId: string, version: number): stri
 
 export function videoRefKey(videoId: string): string {
   return `VIDEO:${videoId}`;
+}
+
+export function masteredRefKey(techniqueId: string): string {
+  return `MASTERED:${techniqueId}`;
 }
 
 type XpClient = PrismaClient | Prisma.TransactionClient;

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { BookCheck } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { XpToast } from "@/components/gamification/xp-toast";
 import { completeReadingAction } from "@/app/(student)/tecnicas/actions";
+import type { ToastPayload } from "@/lib/gamification/types";
 
 type Props = {
   techniqueId: string;
@@ -26,6 +28,7 @@ export function ReadingCompletion({
   const [pending, startTransition] = useTransition();
   const [read, setRead] = useState(readCurrentVersion);
   const [message, setMessage] = useState<Message | null>(null);
+  const [toast, setToast] = useState<ToastPayload | null>(null);
 
   function complete() {
     startTransition(async () => {
@@ -37,6 +40,13 @@ export function ReadingCompletion({
 
       setRead(true);
       setMessage({ variant: "success", text: result.success });
+      if (result.xpAwarded > 0 || result.badges.length > 0) {
+        setToast({
+          id: Date.now(),
+          amount: result.xpAwarded,
+          badges: result.badges,
+        });
+      }
       router.refresh();
     });
   }
@@ -74,6 +84,8 @@ export function ReadingCompletion({
       </Button>
 
       {message ? <Alert variant={message.variant}>{message.text}</Alert> : null}
+
+      <XpToast toast={toast} />
     </section>
   );
 }

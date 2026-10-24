@@ -149,3 +149,32 @@ más simple y se anota acá.
 42. **Navegación inferior con estado activo** (`aria-current="page"`) y pie
     institucional en el layout de estudiante. Los accesos rápidos del inicio
     enlazan a las secciones de la técnica (`#imagenes`, `#videos`, `#juegos`).
+
+## Fase 6
+
+43. **Niveles como función pura** (`lib/gamification/levels.ts`) con los umbrales
+    del plan. `getLevel` devuelve nivel, nombre, XP faltante y avance porcentual
+    dentro del nivel; en el máximo el avance es 100%. El XP total nunca se
+    persiste: se calcula con `SUM(XpEvent.amount)`.
+44. **Reglas de insignias separadas de la base** (`evaluateBadgeRules`) para
+    testearlas: primera lectura, tres lecturas de la misma técnica, 100% en
+    ordenar, 100% en trivia y técnica dominada. `evaluateBadges` consulta
+    lecturas e intentos, crea solo las insignias nuevas y devuelve esas para el
+    toast.
+45. **Idempotencia de insignias** con la clave compuesta de `UserBadge` y
+    `createMany({ skipDuplicates: true })` por insignia. Así dos pedidos
+    concurrentes no duplican ni reportan dos veces la misma insignia.
+46. **Técnica dominada:** se otorga `MASTER_<slug>` y 200 XP cuando hay lectura
+    registrada y los dos juegos de la técnica están aprobados. La entrega usa
+    `MASTERED:<techniqueId>` como `refKey`; las fases de juegos solo necesitan
+    llamar a `evaluateBadges` después de guardar el intento.
+47. **La lectura evalúa insignias en la misma transacción.** La acción devuelve
+    XP total (lectura + posible bonus) e insignias nuevas; el mensaje inline
+    sigue distinguiendo primera lectura, versión nueva o relectura.
+48. **Toast sin dependencias externas.** `XpToast` vive en el cliente, se
+    muestra sobre la navegación inferior con `role="status"`, dura 4,5 s y se
+    reutiliza en lectura y video. El mensaje inline queda como confirmación
+    persistente y accesible.
+49. **Perfil:** nivel y avance, XP total, técnicas leídas, cantidad de lecturas,
+    insignias obtenidas con su fecha e historial de los últimos 20 eventos de XP.
+    Solo se muestran insignias ganadas; las bloqueadas quedan para el pulido.
