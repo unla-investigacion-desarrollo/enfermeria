@@ -14,7 +14,7 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="space-y-4" noValidate>
-      {state?.error ? <Alert>{state.error}</Alert> : null}
+      {state?.error ? <Alert id="login-error">{state.error}</Alert> : null}
 
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
@@ -26,6 +26,7 @@ export function LoginForm() {
           inputMode="email"
           required
           aria-invalid={state?.error ? true : undefined}
+          aria-describedby={state?.error ? "login-error" : undefined}
         />
       </div>
 
@@ -38,6 +39,7 @@ export function LoginForm() {
           autoComplete="current-password"
           required
           aria-invalid={state?.error ? true : undefined}
+          aria-describedby={state?.error ? "login-error" : undefined}
         />
       </div>
 

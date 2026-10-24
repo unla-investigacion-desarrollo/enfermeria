@@ -65,7 +65,7 @@ export default async function PerfilPage() {
       >
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/75">
+            <p className="text-xs font-semibold uppercase tracking-widest text-white/85">
               Nivel {level.level}
             </p>
             <h2 id="nivel" className="text-2xl font-bold">
@@ -74,7 +74,7 @@ export default async function PerfilPage() {
           </div>
           <div className="text-right">
             <p className="text-2xl font-extrabold">{totalXp} XP</p>
-            <p className="text-xs text-white/75">XP total</p>
+            <p className="text-xs text-white/85">XP total</p>
           </div>
         </div>
 

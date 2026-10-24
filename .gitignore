@@ -36,6 +36,8 @@ yarn-error.log*
 # uploads (archivos subidos en desarrollo)
 /public/uploads/*
 !/public/uploads/.gitkeep
+# las imágenes provisorias del seed sí se versionan
+!/public/uploads/placeholder-*.jpg
 
 # vercel
 .vercel

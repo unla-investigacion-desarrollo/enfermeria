@@ -70,9 +70,9 @@ test("el admin crea un estudiante, este cambia la contraseña y puede desactivar
   await searchStudent(page, student.lastName);
 
   const row = page.getByRole("row", { name: new RegExp(student.lastName) });
-  await expect(row.getByText("Activo")).toBeVisible();
+  await expect(row.getByText("Activo", { exact: true })).toBeVisible();
   await row.getByRole("button", { name: `Desactivar a ${fullName}` }).click();
-  await expect(row.getByText("Inactivo")).toBeVisible();
+  await expect(row.getByText("Inactivo", { exact: true })).toBeVisible();
 
   await signOut(page);
   await login(page, student.email, student.definitive);
@@ -86,7 +86,9 @@ test("el admin crea un estudiante, este cambia la contraseña y puede desactivar
     .getByRole("button", { name: `Reactivar a ${fullName}` })
     .click();
   await expect(
-    page.getByRole("row", { name: new RegExp(student.lastName) }).getByText("Activo"),
+    page.getByRole("row", { name: new RegExp(student.lastName) }).getByText("Activo", {
+      exact: true,
+    }),
   ).toBeVisible();
 });
 

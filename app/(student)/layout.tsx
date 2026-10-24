@@ -17,7 +17,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
     <div className="flex min-h-screen flex-col bg-muted/30">
       <header className="bg-bordo text-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/inicio" className="flex items-center gap-3">
+          <Link href="/inicio" className="flex min-h-11 items-center gap-3 py-1">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xs font-extrabold text-bordo">
               UNLa
             </span>
@@ -28,7 +28,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
           <form action={signOutAction}>
             <button
               type="submit"
-              className="rounded-md px-2 py-1 text-xs font-medium text-white/80 underline-offset-4 hover:text-white hover:underline"
+              className="inline-flex min-h-11 items-center rounded-md px-3 text-xs font-medium text-white/85 underline-offset-4 hover:text-white hover:underline"
             >
               Salir
             </button>
@@ -41,7 +41,13 @@ export default async function StudentLayout({ children }: { children: React.Reac
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-10 pt-6">{children}</main>
+      <main
+        id="contenido"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-5xl flex-1 px-4 pb-10 pt-6 focus:outline-none"
+      >
+        {children}
+      </main>
 
       <footer className="border-t border-border bg-white px-4 pb-24 pt-6 text-center text-xs text-muted-foreground">
         <p className="font-semibold text-navy">Universidad Nacional de Lanús</p>

@@ -17,8 +17,13 @@ export function CardHeader({ className, ...props }: React.ComponentProps<"div">)
   return <div className={cn("flex flex-col gap-1.5 p-6", className)} {...props} />;
 }
 
-export function CardTitle({ className, ...props }: React.ComponentProps<"h2">) {
-  return <h2 className={cn("text-xl font-bold text-navy", className)} {...props} />;
+type CardTitleProps = React.ComponentProps<"h2"> & {
+  /** Permite usar h1 en páginas cuyo título principal es el de la tarjeta. */
+  as?: "h1" | "h2" | "h3";
+};
+
+export function CardTitle({ className, as: Tag = "h2", ...props }: CardTitleProps) {
+  return <Tag className={cn("text-xl font-bold text-navy", className)} {...props} />;
 }
 
 export function CardDescription({ className, ...props }: React.ComponentProps<"p">) {

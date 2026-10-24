@@ -198,12 +198,12 @@ CSP y headers básicos.
 
 ### Fase 9 — Pulido y entrega
 
-- [ ] Accesibilidad (contraste, foco, alt, teclado).
-- [ ] Manifest PWA e íconos.
-- [ ] Estados vacíos y de error.
-- [ ] e2e del recorrido completo.
-- [ ] README final con capturas y usuario demo.
-- [ ] Aceptación: tests OK; Lighthouse mobile >= 90 en Accesibilidad y Buenas prácticas.
+- [x] Accesibilidad (contraste, foco, alt, teclado).
+- [x] Manifest PWA e íconos.
+- [x] Estados vacíos y de error.
+- [x] e2e del recorrido completo.
+- [x] README final con capturas y usuario demo.
+- [x] Aceptación: tests OK; Lighthouse mobile >= 90 en Accesibilidad y Buenas prácticas.
 
 ## 10. Pendientes para validar con el equipo
 

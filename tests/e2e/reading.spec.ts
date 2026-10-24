@@ -90,7 +90,7 @@ test("ver el video registra una visualización y 20 XP", async ({ page }, testIn
   await page.goto("/tecnicas/via-periferica-adulto");
 
   await page
-    .getByRole("button", { name: "Reproducir Colocación de venoclisis" })
+    .getByRole("button", { name: /Reproducir: Colocación de venoclisis/ })
     .click();
   await expect(page.locator('iframe[title="Colocación de venoclisis"]')).toBeVisible();
   await expect(page.getByText("Visto", { exact: true })).toBeVisible();

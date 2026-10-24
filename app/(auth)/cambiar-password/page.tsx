@@ -19,7 +19,9 @@ export default async function ChangePasswordPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Cambiá tu contraseña</CardTitle>
+        <CardTitle as="h1" className="text-2xl">
+          Cambiá tu contraseña
+        </CardTitle>
         <CardDescription>
           Es tu primer ingreso. Elegí una contraseña personal para continuar.
         </CardDescription>

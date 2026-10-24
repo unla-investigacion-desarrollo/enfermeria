@@ -85,12 +85,12 @@ export default async function TechniqueReadingPage({ params }: PageProps) {
       </Link>
 
       <header className="space-y-2 rounded-xl bg-gradient-to-br from-bordo to-bordo-dark p-5 text-white sm:p-6">
-        <p className="text-xs font-semibold uppercase tracking-widest text-white/75">Técnica</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-white/85">Técnica</p>
         <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{technique.title}</h1>
         {technique.summary ? (
-          <p className="text-sm leading-relaxed text-white/85">{technique.summary}</p>
+          <p className="text-sm leading-relaxed text-white/90">{technique.summary}</p>
         ) : null}
-        <p className="text-xs text-white/75">Versión {technique.version}</p>
+        <p className="text-xs text-white/85">Versión {technique.version}</p>
       </header>
 
       <nav

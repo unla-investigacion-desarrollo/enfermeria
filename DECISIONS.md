@@ -250,3 +250,58 @@ más simple y se anota acá.
     final. El test verifica que `correctIdx`/`explanation` no estén en el HTML
     antes de responder y usa usuarios `trivia.e2e` y `master.e2e` con progreso
     limpio por corrida.
+
+## Fase 9
+
+64. **Cabeceras de seguridad en `next.config.ts`:** CSP, `X-Content-Type-Options`,
+    `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y
+    `Cross-Origin-Opener-Policy`. La CSP permite `youtube-nocookie.com` en
+    `frame-src`, Google Fonts en `style-src`/`font-src` y los scripts inline de
+    Next.js (`'unsafe-inline'`; `'unsafe-eval'` solo en desarrollo). Por eso
+    Lighthouse descuenta un punto en Buenas prácticas de la página con video,
+    aunque el puntaje sigue por encima del umbral.
+65. **PWA con `app/manifest.ts`** (`/manifest.webmanifest`), íconos 192/512,
+    maskable 512, apple-touch-icon y favicon. Los íconos se generan con
+    `scripts/generate-assets.py` (Pillow) y quedan versionados en `public/`.
+    El manifest queda fuera del middleware por el punto de la extensión.
+66. **Imágenes provisorias honestas.** En lugar de dejar imágenes rotas, se
+    generaron cinco JPEG que dicen “Material gráfico pendiente de reemplazo”.
+    Están documentados como TODO en `prisma/seed-data/README.md`; el equipo de
+    Enfermería los reemplaza desde el panel.
+67. **Accesibilidad:** enlace “Saltar al contenido” global y `main` con
+    `id="contenido"` en los tres layouts; `h1` en login y cambio de contraseña;
+    `scope="col"` en tablas; texto sobre bordo con opacidad ≥85; foco visible
+    global; `prefers-reduced-motion`; nombres accesibles que incluyen el texto
+    visible. El botón de video ahora dice “Reproducir: <título>” en lugar de un
+    `aria-label` que no coincidía con el texto visible (`label-content-name-mismatch`).
+68. **Estados de error y carga:** `app/not-found.tsx`, `app/error.tsx`,
+    `app/global-error.tsx` y `app/loading.tsx`. Los estados vacíos de listados,
+    búsqueda, perfil, juegos y panel ya existían; se conservan.
+69. **Cuenta demo separada del seed de producción.** `npm run db:demo` crea o
+    actualiza `estudiante.demo@unla.edu.ar` con `mustChangePassword = false`.
+    Se documenta como cuenta local/de demostración y no se ejecuta en `db:seed`.
+70. **E2E del recorrido completo** (`tests/e2e/journey.spec.ts`): el admin crea
+    una estudiante, cambia la contraseña provisoria, lee, mira el video, ordena
+    los pasos, completa la trivia y verifica 720 XP, las cuatro insignias y el
+    nuevo ingreso con la contraseña definitiva. Usa las preguntas ficticias de
+    `trivia-fixtures.ts`.
+71. **Limpieza de usuarios e2e con relaciones.** El `global-setup` ahora borra
+    XP, insignias, intentos, videos y lecturas antes de eliminar usuarios, porque
+    las foreign keys no tienen cascada. También se corrigió una falsa positiva
+    histórica del test de desactivación: `getByText("Activo")` hacía match con
+    “Inactivo”; ahora usa `exact: true` y espera el cambio real del botón.
+72. **Capturas reproducibles:** `scripts/capture-screenshots.ts` reinicia el
+    progreso de la cuenta demo, usa la trivia ficticia para completar el perfil
+    y después restaura el banco real. Exporta JPEG a 2x para mantener el README
+    liviano; las capturas de trivia y del panel muestran el estado vacío real
+    del Apéndice B.
+73. **Lighthouse mobile:** Accesibilidad 100 y Buenas prácticas 100 en `/login`,
+    `/inicio` y `/perfil`; 96 en la lectura de la técnica por el aviso de CSP
+    (`unsafe-inline`). Se cumple el umbral ≥90 de la fase.
+74. **Objetivos táctiles de al menos 24 px.** Lighthouse mobile marcaba
+    `target-size` en el enlace “Saltar al contenido”, el logo del encabezado y
+    el botón “Salir” de las pantallas de juego. Se agregó `min-h-11` (44 px) al
+    enlace de salto cuando recibe foco, a los logos y a “Salir”, y `min-h-6` a
+    los enlaces de la navegación administrativa. Con eso todas las pantallas
+    auditadas quedan en Accesibilidad 100 y Buenas prácticas 100, salvo la
+    lectura de la técnica (96 por el aviso informativo de CSP).

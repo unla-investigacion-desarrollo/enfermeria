@@ -46,11 +46,11 @@ export default async function AdminTecnicasPage() {
           <table className="w-full min-w-[720px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
-                <th className="px-4 py-3 font-semibold">Técnica</th>
-                <th className="px-4 py-3 font-semibold">Estado</th>
-                <th className="px-4 py-3 font-semibold">Versión</th>
-                <th className="px-4 py-3 font-semibold">Contenido</th>
-                <th className="px-4 py-3 text-right font-semibold">Acciones</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Técnica</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Estado</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Versión</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Contenido</th>
+                <th scope="col" className="px-4 py-3 text-right font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody>

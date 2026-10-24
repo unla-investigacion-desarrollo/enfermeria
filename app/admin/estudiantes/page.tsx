@@ -113,11 +113,11 @@ export default async function AdminEstudiantesPage({ searchParams }: PageProps) 
               <table className="w-full min-w-[720px] border-collapse text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-muted-foreground">
-                    <th className="px-2 py-2 font-semibold">Estudiante</th>
-                    <th className="px-2 py-2 font-semibold">DNI</th>
-                    <th className="px-2 py-2 font-semibold">Email</th>
-                    <th className="px-2 py-2 font-semibold">Estado</th>
-                    <th className="px-2 py-2 text-right font-semibold">Acciones</th>
+                    <th scope="col" className="px-2 py-2 font-semibold">Estudiante</th>
+                    <th scope="col" className="px-2 py-2 font-semibold">DNI</th>
+                    <th scope="col" className="px-2 py-2 font-semibold">Email</th>
+                    <th scope="col" className="px-2 py-2 font-semibold">Estado</th>
+                    <th scope="col" className="px-2 py-2 text-right font-semibold">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>

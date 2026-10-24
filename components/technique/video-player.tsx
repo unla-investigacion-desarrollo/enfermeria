@@ -70,16 +70,15 @@ export function VideoPlayer({ video, initialViewed }: Props) {
           type="button"
           onClick={play}
           disabled={pending}
-          aria-label={`Reproducir ${video.title}`}
           className="group relative flex aspect-video w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-border bg-navy text-white transition-colors hover:bg-navy-dark disabled:opacity-80"
         >
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-bordo transition-transform group-hover:scale-105">
             <Play className="ml-0.5 h-6 w-6" aria-hidden="true" fill="currentColor" />
           </span>
           <span className="text-sm font-semibold">
-            {pending ? "Cargando video…" : "Reproducir video"}
+            {pending ? "Cargando video…" : `Reproducir: ${video.title}`}
           </span>
-          <span className="text-xs text-white/70">Video de YouTube sin cookies de seguimiento</span>
+          <span className="text-xs text-white/80">Video de YouTube sin cookies de seguimiento</span>
         </button>
       )}
 

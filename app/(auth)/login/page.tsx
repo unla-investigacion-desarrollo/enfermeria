@@ -14,7 +14,9 @@ export default function LoginPage() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-2xl">Ingresá al manual</CardTitle>
+        <CardTitle as="h1" className="text-2xl">
+          Ingresá al manual
+        </CardTitle>
         <CardDescription>
           Usá el email y la contraseña que te asignó la cátedra.
         </CardDescription>

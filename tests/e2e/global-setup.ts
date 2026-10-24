@@ -40,8 +40,22 @@ async function upsertTestUser(input: {
 }
 
 export default async function globalSetup() {
-  // Limpia estudiantes creados por corridas e2e anteriores.
-  await prisma.user.deleteMany({ where: { email: { startsWith: "e2e." } } });
+  // Limpia estudiantes creados por corridas e2e anteriores junto con su
+  // progreso: las relaciones no tienen borrado en cascada.
+  const previousUsers = await prisma.user.findMany({
+    where: { email: { startsWith: "e2e." } },
+    select: { id: true },
+  });
+  const previousUserIds = previousUsers.map((user) => user.id);
+
+  if (previousUserIds.length > 0) {
+    await prisma.userBadge.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.activityAttempt.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.videoView.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.readingCompletion.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.xpEvent.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.user.deleteMany({ where: { id: { in: previousUserIds } } });
+  }
 
   // Las preguntas de prueba de la trivia se recrean en cada corrida.
   await prisma.triviaQuestion.deleteMany({ where: { prompt: { startsWith: "[e2e]" } } });
