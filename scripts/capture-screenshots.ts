@@ -1,11 +1,11 @@
 /**
  * Captura las imágenes de docs/screenshots para el README.
  *
- * Requisitos: base migrada + seed + `npm run db:demo` y un servidor de
+ * Requisitos: base migrada + seed + `yarn db:demo` y un servidor de
  * producción en CAPTURE_BASE_URL (por defecto http://localhost:3001).
  *
- *   npm run build && npm start -- -p 3001
- *   npx tsx scripts/capture-screenshots.ts
+ *   yarn build && yarn start --port 3001
+ *   yarn tsx scripts/capture-screenshots.ts
  *
  * El script reinicia el progreso de la cuenta demo para que las capturas sean
  * deterministas y responde la trivia oficial con el banco cargado por el seed.

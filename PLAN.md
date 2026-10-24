@@ -12,7 +12,7 @@ gamificado.
 ## 0. Reglas de trabajo
 
 - [x] Ejecutar una fase por vez, en orden, sin avanzar hasta cumplir la aceptación.
-- [x] Al cerrar cada fase: `npm run lint`, `npm run typecheck`, `npm test` y commit
+- [x] Al cerrar cada fase: `yarn lint`, `yarn typecheck`, `yarn test` y commit
       `feat(fase-N): <resumen>`.
 - [x] Mantener este archivo actualizado con las tareas completadas.
 - [x] No inventar contenido clínico: usar Apéndices A y B. Si falta algo, dejar
@@ -139,7 +139,7 @@ CSP y headers básicos.
 - [x] Prisma con el schema de la sección 4 y primera migración.
 - [x] Scripts `dev`, `build`, `lint`, `typecheck`, `test`, `test:e2e`, `db:migrate`, `db:seed`, `db:reset`.
 - [x] `README.md` con puesta en marcha desde cero.
-- [x] Aceptación: `docker compose up -d && npm run db:migrate && npm run dev` levanta sin errores; lint y typecheck pasan.
+- [x] Aceptación: `docker compose up -d && yarn db:migrate && yarn dev` levanta sin errores; lint y typecheck pasan.
 
 ### Fase 2 — Autenticación y roles
 

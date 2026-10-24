@@ -2,6 +2,27 @@
   "name": "manual-enfermeria",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@4.18.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependenciesMeta": {
+    "@prisma/client": {
+      "built": true
+    },
+    "@prisma/engines": {
+      "built": true
+    },
+    "esbuild": {
+      "built": true
+    },
+    "prisma": {
+      "built": true
+    },
+    "unrs-resolver": {
+      "built": true
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

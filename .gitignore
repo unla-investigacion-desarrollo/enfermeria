@@ -3,6 +3,12 @@
 /.pnp
 .pnp.*
 
+# yarn
+/.yarn/cache
+/.yarn/unplugged
+/.yarn/install-state.gz
+/.yarn/build-state.yml
+
 # next
 /.next/
 /out/

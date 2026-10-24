@@ -5,7 +5,7 @@ import { hashPassword } from "../lib/auth/password";
 /**
  * Cuenta de demostración para probar el recorrido del estudiante sin pasar por
  * el alta administrativa. No forma parte del seed de producción: se ejecuta
- * únicamente con `npm run db:demo` en entornos locales o de demostración.
+ * únicamente con `yarn db:demo` en entornos locales o de demostración.
  */
 const prisma = new PrismaClient();
 

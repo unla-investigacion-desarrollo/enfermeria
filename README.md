@@ -51,7 +51,7 @@ contenidos.
 | --- |
 | <img src="docs/screenshots/12-checklist.jpg" width="360" alt="Check list con opciones de autoevaluación" /> |
 
-> Las capturas se generan con `npx tsx scripts/capture-screenshots.ts` sobre una
+> Las capturas se generan con `yarn tsx scripts/capture-screenshots.ts` sobre una
 > base con el seed y la cuenta demo.
 
 ## Stack
@@ -66,13 +66,15 @@ contenidos.
 ## Requisitos
 
 - Node.js 20 o superior (probado con Node 26)
+- Yarn 4 (el repo fija `packageManager: yarn@4.18.0`; con Corepack alcanza con
+  `corepack enable`)
 - Docker Desktop / Docker Engine con Compose
 
 ## Puesta en marcha
 
 ```bash
 # 1. Dependencias
-npm install
+yarn install
 
 # 2. Variables de entorno
 cp .env.example .env
@@ -80,16 +82,16 @@ cp .env.example .env
 
 # 3. Base de datos
 docker compose up -d
-npm run db:migrate
+yarn db:migrate
 
 # 4. Datos iniciales (badges + técnica de vía periférica + admin)
-npm run db:seed
+yarn db:seed
 
 # 5. Cuenta de estudiante para probar el recorrido (opcional)
-npm run db:demo
+yarn db:demo
 
 # 6. Desarrollo
-npm run dev
+yarn dev
 ```
 
 La app queda en <http://localhost:3000>.
@@ -113,27 +115,27 @@ La app queda en <http://localhost:3000>.
 
 | Script | Qué hace |
 | --- | --- |
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
-| `npm start` | Servidor de producción |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript sin emitir |
-| `npm test` | Tests unitarios (Vitest) |
-| `npm run test:e2e` | Tests end-to-end (Playwright, desktop + mobile) |
-| `npm run db:migrate` | Crea/aplica migraciones en desarrollo |
-| `npm run db:seed` | Admin, insignias y técnica inicial |
-| `npm run db:demo` | Cuenta de estudiante demo |
-| `npm run db:reset` | Borra y recrea la base + seed |
-| `npm run db:studio` | Prisma Studio |
-| `npm run format` | Prettier |
+| `yarn dev` | Servidor de desarrollo |
+| `yarn build` | Build de producción |
+| `yarn start` | Servidor de producción |
+| `yarn lint` | ESLint |
+| `yarn typecheck` | TypeScript sin emitir |
+| `yarn test` | Tests unitarios (Vitest) |
+| `yarn test:e2e` | Tests end-to-end (Playwright, desktop + mobile) |
+| `yarn db:migrate` | Crea/aplica migraciones en desarrollo |
+| `yarn db:seed` | Admin, insignias y técnica inicial |
+| `yarn db:demo` | Cuenta de estudiante demo |
+| `yarn db:reset` | Borra y recrea la base + seed |
+| `yarn db:studio` | Prisma Studio |
+| `yarn format` | Prettier |
 
 ## Tests y calidad
 
 ```bash
-npm run lint
-npm run typecheck
-npm test
-npm run test:e2e
+yarn lint
+yarn typecheck
+yarn test
+yarn test:e2e
 ```
 
 - **Unitarios (Vitest):** reglas de XP, insignias, niveles, selección y

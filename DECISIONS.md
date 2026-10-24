@@ -45,7 +45,7 @@ más simple y se anota acá.
     instancias; suficiente para el MVP, a reemplazar si se despliega en varias.
 15. **Playwright 1.64.1** para usar el Chromium ya cacheado en el equipo. Se agregó
     `PLAYWRIGHT_CHANNEL` como variable opcional para correr contra Chrome
-    instalado (`PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`).
+    instalado (`PLAYWRIGHT_CHANNEL=chrome yarn test:e2e`).
 16. **Usuarios de e2e** se crean en `tests/e2e/global-setup.ts` con bcrypt cost 4
     (solo test) y se resetean en cada corrida. El test que cambia la contraseña del
     admin corre solo en el proyecto `chromium` para no chocar con `mobile`.
@@ -277,7 +277,7 @@ más simple y se anota acá.
 68. **Estados de error y carga:** `app/not-found.tsx`, `app/error.tsx`,
     `app/global-error.tsx` y `app/loading.tsx`. Los estados vacíos de listados,
     búsqueda, perfil, juegos y panel ya existían; se conservan.
-69. **Cuenta demo separada del seed de producción.** `npm run db:demo` crea o
+69. **Cuenta demo separada del seed de producción.** `yarn db:demo` crea o
     actualiza `estudiante.demo@unla.edu.ar` con `mustChangePassword = false`.
     Se documenta como cuenta local/de demostración y no se ejecuta en `db:seed`.
 70. **E2E del recorrido completo** (`tests/e2e/journey.spec.ts`): el admin crea
@@ -329,3 +329,12 @@ más simple y se anota acá.
     `active: true` para habilitar el juego, con la recomendación de validación
     docente. El seed de e2e resiembra este banco, y las pruebas siguen usando
     preguntas `[e2e]` para no depender de su contenido.
+78. **Yarn 4 como único gestor de paquetes.** El proyecto se instala y se
+    ejecuta con Yarn 4.18 (`packageManager` en `package.json`), con
+    `nodeLinker: node-modules` para que Next.js, Playwright y Prisma resuelvan
+    igual que antes. Se eliminó `package-lock.json` y se versiona `yarn.lock`.
+    Yarn bloquea los scripts de instalación por defecto, así que
+    `dependenciesMeta` habilita explícitamente el build de Prisma y esbuild; sin
+    eso el cliente de Prisma y los binarios de `tsx`/Vitest no quedan listos en
+    una instalación limpia. Los comandos de documentación, Playwright y scripts
+    pasaron de `npm`/`npx` a `yarn`.
