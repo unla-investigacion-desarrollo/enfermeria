@@ -195,3 +195,4 @@ El avance por fases está en [PLAN.md](./PLAN.md) y las decisiones técnicas en
   reemplazarse por el material definitivo desde el panel.
 - El rate limit de login es en memoria: para despliegues con más de una
   instancia conviene moverlo a un almacenamiento compartido.
+# enfermeria
