@@ -338,3 +338,23 @@ más simple y se anota acá.
     eso el cliente de Prisma y los binarios de `tsx`/Vitest no quedan listos en
     una instalación limpia. Los comandos de documentación, Playwright y scripts
     pasaron de `npm`/`npx` a `yarn`.
+79. **Lectura guiada por fases sobre los 29 pasos oficiales.** La lectura se
+    divide en 5 fases y 7 checkpoints derivados del orden y del énfasis de los
+    pasos del documento de Enfermería; no se agrega contenido clínico. El avance
+    se guarda en `ReadingProgress` (fase y paso), el mapa permite saltar entre
+    fases y el repaso rápido pagina los 29 pasos con filtro de puntos críticos.
+    Los checkpoints se resuelven con las mismas opciones del paso y marcan el
+    primer intento; se pueden saltar y no otorgan XP. Las listas largas del
+    estudiante y del admin quedaron paginadas para que el cuadernillo sea
+    cómodo de recorrer en mobile.
+80. **Aviso de actualización por técnica y estudiante.** Al guardar una técnica
+    publicada se incrementa su versión y, si el admin deja tildado “Avisar a
+    estudiantes al guardar”, se crea o reabre un `Notification` para cada estudiante
+    activo con lectura completada o progreso guardado en esa técnica. El aviso
+    es único por `userId + techniqueId + type`; una nueva versión lo vuelve a
+    marcar como no leído. Se muestra en la campana del encabezado, en el inicio
+    y en la bandeja `/notificaciones`, y se marca leído al completar la lectura
+    de la versión publicada o manualmente. Una técnica en borrador no notifica.
+    El e2e `notifications.spec.ts` cubre el circuito completo y el ABM de
+    técnicas (alta, edición, publicación y preguntas) sigue disponible en
+    `/admin/tecnicas`.

@@ -84,6 +84,7 @@ export const techniquePayloadSchema = z.object({
     )
     .max(20),
   checklist: z.array(z.string().trim().min(1).max(500)).max(50),
+  notifyStudents: z.boolean().optional(),
 });
 
 export type TechniquePayload = z.infer<typeof techniquePayloadSchema>;

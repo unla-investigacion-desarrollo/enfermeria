@@ -1,18 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/guard";
 import { buttonVariants } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { toggleTechniquePublishedAction } from "./actions";
 
 export const metadata: Metadata = { title: "Técnicas" };
 
-export default async function AdminTecnicasPage() {
+const PAGE_SIZE = 10;
+const pageSchema = z.coerce.number().int().min(1).max(999).catch(1);
+
+type PageProps = {
+  searchParams: Promise<{ page?: string | string[] }>;
+};
+
+export default async function AdminTecnicasPage({ searchParams }: PageProps) {
   await requireAdmin();
+
+  const params = await searchParams;
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const requestedPage = pageSchema.parse(rawPage);
+
+  const total = await prisma.technique.count();
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const safePage = Math.min(requestedPage, totalPages);
 
   const techniques = await prisma.technique.findMany({
     orderBy: { updatedAt: "desc" },
+    skip: (safePage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
     include: {
       _count: { select: { steps: true, questions: true } },
     },
@@ -25,6 +44,9 @@ export default async function AdminTecnicasPage() {
           <h1 className="text-2xl font-bold text-navy">Técnicas</h1>
           <p className="text-sm text-muted-foreground">
             Cargá el contenido estructurado, publicalo y gestioná sus preguntas.
+          </p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {total} {total === 1 ? "técnica" : "técnicas"} en total
           </p>
         </div>
         <Link href="/admin/tecnicas/nueva" className={buttonVariants()}>
@@ -106,6 +128,8 @@ export default async function AdminTecnicasPage() {
           </table>
         </div>
       )}
+
+      <Pagination page={safePage} totalPages={totalPages} basePath="/admin/tecnicas" />
     </div>
   );
 }

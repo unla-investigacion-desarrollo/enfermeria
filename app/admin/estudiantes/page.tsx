@@ -1,44 +1,60 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { z } from "zod";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/guard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pagination } from "@/components/ui/pagination";
 import { CreateStudentForm } from "./create-student-form";
 import { ResetPasswordForm } from "./reset-password-form";
 import { toggleStudentActiveAction } from "./actions";
 
 export const metadata: Metadata = { title: "Estudiantes" };
 
+const PAGE_SIZE = 20;
+const pageSchema = z.coerce.number().int().min(1).max(999).catch(1);
+
 type PageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string | string[]; page?: string | string[] }>;
 };
 
 export default async function AdminEstudiantesPage({ searchParams }: PageProps) {
   await requireAdmin();
 
   const params = await searchParams;
-  const search = typeof params.q === "string" ? params.q.trim().slice(0, 60) : "";
+  const rawSearch = Array.isArray(params.q) ? params.q[0] : params.q;
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const search = (rawSearch ?? "").trim().slice(0, 60);
   const terms = search.split(/\s+/).filter(Boolean).slice(0, 5);
+  const requestedPage = pageSchema.parse(rawPage);
+
+  const where = {
+    role: "STUDENT" as const,
+    ...(terms.length > 0
+      ? {
+          AND: terms.map((term) => ({
+            OR: [
+              { firstName: { contains: term, mode: "insensitive" as const } },
+              { lastName: { contains: term, mode: "insensitive" as const } },
+              { email: { contains: term, mode: "insensitive" as const } },
+            ],
+          })),
+        }
+      : {}),
+  };
+
+  const total = await prisma.user.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const safePage = Math.min(requestedPage, totalPages);
 
   const students = await prisma.user.findMany({
-    where: {
-      role: "STUDENT",
-      ...(terms.length > 0
-        ? {
-            AND: terms.map((term) => ({
-              OR: [
-                { firstName: { contains: term, mode: "insensitive" as const } },
-                { lastName: { contains: term, mode: "insensitive" as const } },
-                { email: { contains: term, mode: "insensitive" as const } },
-              ],
-            })),
-          }
-        : {}),
-    },
+    where,
     orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    skip: (safePage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
     select: {
       id: true,
       firstName: true,
@@ -75,7 +91,7 @@ export default async function AdminEstudiantesPage({ searchParams }: PageProps) 
           <CardTitle className="text-lg">
             Listado{" "}
             <span className="text-sm font-normal text-muted-foreground">
-              ({students.length} {students.length === 1 ? "estudiante" : "estudiantes"})
+              ({total} {total === 1 ? "estudiante" : "estudiantes"})
             </span>
           </CardTitle>
 
@@ -174,6 +190,14 @@ export default async function AdminEstudiantesPage({ searchParams }: PageProps) 
               </table>
             </div>
           )}
+
+          <Pagination
+            page={safePage}
+            totalPages={totalPages}
+            basePath="/admin/estudiantes"
+            searchParams={{ q: search }}
+            className="pt-4"
+          />
         </CardContent>
       </Card>
     </div>

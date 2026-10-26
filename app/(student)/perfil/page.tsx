@@ -1,19 +1,35 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { z } from "zod";
 import { requireUser } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db/prisma";
 import { BadgeIcon } from "@/components/gamification/badge-icon";
+import { Pagination } from "@/components/ui/pagination";
 import { getLevel } from "@/lib/gamification/levels";
 
 export const metadata: Metadata = { title: "Perfil" };
+
+const XP_PAGE_SIZE = 10;
+const pageSchema = z.coerce.number().int().min(1).max(999).catch(1);
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   dateStyle: "medium",
   timeZone: "America/Argentina/Buenos_Aires",
 });
 
-export default async function PerfilPage() {
+type PageProps = {
+  searchParams: Promise<{ page?: string | string[] }>;
+};
+
+export default async function PerfilPage({ searchParams }: PageProps) {
   const sessionUser = await requireUser();
+  const params = await searchParams;
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const requestedPage = pageSchema.parse(rawPage);
+
+  const xpTotalEvents = await prisma.xpEvent.count({ where: { userId: sessionUser.id } });
+  const xpTotalPages = Math.max(1, Math.ceil(xpTotalEvents / XP_PAGE_SIZE));
+  const xpPage = Math.min(requestedPage, xpTotalPages);
 
   const [profile, xpTotal] = await Promise.all([
     prisma.user.findUnique({
@@ -33,7 +49,8 @@ export default async function PerfilPage() {
         xpEvents: {
           select: { id: true, amount: true, reason: true, createdAt: true },
           orderBy: { createdAt: "desc" },
-          take: 20,
+          skip: (xpPage - 1) * XP_PAGE_SIZE,
+          take: XP_PAGE_SIZE,
         },
       },
     }),
@@ -156,19 +173,29 @@ export default async function PerfilPage() {
             Todavía no sumaste XP. Las lecturas y los videos suman puntos.
           </div>
         ) : (
-          <ul className="divide-y divide-border rounded-xl border border-border bg-white">
-            {profile.xpEvents.map((event) => (
-              <li key={event.id} className="flex items-start justify-between gap-3 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium">{event.reason}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {dateFormatter.format(event.createdAt)}
-                  </p>
-                </div>
-                <span className="shrink-0 text-sm font-bold text-bordo">+{event.amount} XP</span>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="divide-y divide-border rounded-xl border border-border bg-white">
+              {profile.xpEvents.map((event) => (
+                <li key={event.id} className="flex items-start justify-between gap-3 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium">{event.reason}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {dateFormatter.format(event.createdAt)}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-sm font-bold text-bordo">
+                    +{event.amount} XP
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <Pagination
+              page={xpPage}
+              totalPages={xpTotalPages}
+              basePath="/perfil"
+              className="pt-1"
+            />
+          </>
         )}
       </section>
     </div>

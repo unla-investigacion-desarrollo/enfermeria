@@ -5,21 +5,28 @@ import { prisma } from "@/lib/db/prisma";
 import { requireUser } from "@/lib/auth/guard";
 import { SearchForm } from "@/components/technique/search-form";
 import { TechniqueCard } from "@/components/technique/technique-card";
+import { Pagination } from "@/components/ui/pagination";
 import { matchesQuery } from "@/lib/techniques/search";
 import { getLatestReadings } from "@/lib/techniques/progress";
 
 export const metadata: Metadata = { title: "Técnicas" };
 
 const querySchema = z.string().max(80).catch("");
+const pageSchema = z.coerce.number().int().min(1).max(999).catch(1);
+
+const PAGE_SIZE = 6;
 
 type PageProps = {
-  searchParams: Promise<{ q?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; page?: string | string[] }>;
 };
 
 export default async function TecnicasPage({ searchParams }: PageProps) {
   const user = await requireUser();
-  const { q: rawQuery } = await searchParams;
-  const q = querySchema.parse(Array.isArray(rawQuery) ? rawQuery[0] : (rawQuery ?? "")).trim();
+  const params = await searchParams;
+  const rawQuery = Array.isArray(params.q) ? params.q[0] : params.q;
+  const rawPage = Array.isArray(params.page) ? params.page[0] : params.page;
+  const q = querySchema.parse(rawQuery ?? "").trim();
+  const requestedPage = pageSchema.parse(rawPage);
 
   const [techniques, readings] = await Promise.all([
     prisma.technique.findMany({
@@ -36,6 +43,13 @@ export default async function TecnicasPage({ searchParams }: PageProps) {
       )
     : techniques;
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safePage = Math.min(requestedPage, totalPages);
+  const pagedTechniques = filtered.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE,
+  );
+
   return (
     <div className="space-y-6">
       <div>
@@ -43,6 +57,10 @@ export default async function TecnicasPage({ searchParams }: PageProps) {
         <h1 className="text-2xl font-bold text-navy sm:text-3xl">Técnicas</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Leé la técnica completa, mirá las imágenes y registrá tu avance.
+        </p>
+        <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {filtered.length} {filtered.length === 1 ? "técnica" : "técnicas"}
+          {q ? ` para “${q}”` : " publicadas"}
         </p>
       </div>
 
@@ -60,21 +78,29 @@ export default async function TecnicasPage({ searchParams }: PageProps) {
           </Link>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {filtered.map((technique) => (
-            <TechniqueCard
-              key={technique.id}
-              technique={{
-                slug: technique.slug,
-                title: technique.title,
-                summary: technique.summary,
-                version: technique.version,
-                stepCount: technique._count.steps,
-              }}
-              latestReading={readings.get(technique.id)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {pagedTechniques.map((technique) => (
+              <TechniqueCard
+                key={technique.id}
+                technique={{
+                  slug: technique.slug,
+                  title: technique.title,
+                  summary: technique.summary,
+                  version: technique.version,
+                  stepCount: technique._count.steps,
+                }}
+                latestReading={readings.get(technique.id)}
+              />
+            ))}
+          </div>
+          <Pagination
+            page={safePage}
+            totalPages={totalPages}
+            basePath="/tecnicas"
+            searchParams={{ q }}
+          />
+        </>
       )}
     </div>
   );

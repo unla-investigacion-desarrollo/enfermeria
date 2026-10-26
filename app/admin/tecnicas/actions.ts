@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db/prisma";
 import { requireAdmin } from "@/lib/auth/guard";
 import { masterBadgeCode, masterBadgeData } from "@/lib/techniques/badges";
+import { notifyTechniqueUpdate } from "@/lib/notifications/technique-updates";
 import { techniqueIdSchema, techniquePayloadSchema } from "@/lib/validation/techniques";
 
 export type SaveTechniqueState =
@@ -169,6 +170,21 @@ export async function saveTechniqueAction(input: unknown): Promise<SaveTechnique
     revalidatePath("/admin/tecnicas");
     revalidatePath(`/admin/tecnicas/${technique.id}/editar`);
     revalidatePath(`/admin/tecnicas/${technique.id}/preview`);
+
+    if (existing?.published && data.notifyStudents !== false) {
+      try {
+        await notifyTechniqueUpdate(prisma, {
+          id: technique.id,
+          slug: technique.slug,
+          title: technique.title,
+          version: technique.version,
+        });
+        revalidatePath("/notificaciones");
+        revalidatePath("/inicio");
+      } catch (error) {
+        console.error("No se pudieron crear las notificaciones de actualización", error);
+      }
+    }
 
     return {
       success: existing

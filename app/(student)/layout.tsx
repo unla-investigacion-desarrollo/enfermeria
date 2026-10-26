@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db/prisma";
 import { signOutAction } from "@/lib/auth/actions";
@@ -6,12 +7,17 @@ import { StudentNav } from "@/components/student/student-nav";
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
-  const user = session?.user?.id
-    ? await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { firstName: true },
-      })
-    : null;
+  const userId = session?.user?.id;
+
+  const [user, unreadNotifications] = userId
+    ? await Promise.all([
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { firstName: true },
+        }),
+        prisma.notification.count({ where: { userId, readAt: null } }),
+      ])
+    : [null, 0];
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/30">
@@ -25,14 +31,32 @@ export default async function StudentLayout({ children }: { children: React.Reac
               Manual de Técnicas de Enfermería
             </span>
           </Link>
-          <form action={signOutAction}>
-            <button
-              type="submit"
-              className="inline-flex min-h-11 items-center rounded-md px-3 text-xs font-medium text-white/85 underline-offset-4 hover:text-white hover:underline"
+          <div className="flex items-center gap-1">
+            <Link
+              href="/notificaciones"
+              aria-label={
+                unreadNotifications > 0
+                  ? `Notificaciones (${unreadNotifications} sin leer)`
+                  : "Notificaciones"
+              }
+              className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-white/85 underline-offset-4 hover:text-white"
             >
-              Salir
-            </button>
-          </form>
+              <Bell className="h-5 w-5" aria-hidden="true" />
+              {unreadNotifications > 0 ? (
+                <span className="absolute right-1 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-300 px-1 text-[10px] font-extrabold text-navy">
+                  {unreadNotifications > 9 ? "9+" : unreadNotifications}
+                </span>
+              ) : null}
+            </Link>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center rounded-md px-3 text-xs font-medium text-white/85 underline-offset-4 hover:text-white hover:underline"
+              >
+                Salir
+              </button>
+            </form>
+          </div>
         </div>
         <div className="bg-navy">
           <div className="mx-auto max-w-5xl px-4 py-2 text-xs font-medium tracking-wide text-white/90">

@@ -88,6 +88,17 @@ export async function completeReadingAction(
       },
     });
 
+    // Al completar la versión publicada, el aviso de actualización queda leído.
+    await tx.notification.updateMany({
+      where: {
+        userId: user.id,
+        techniqueId: technique.id,
+        type: "TECHNIQUE_UPDATED",
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
+
     let readingXp = 0;
     if (previousReadings === 0) {
       readingXp = await awardXp(tx, {
@@ -121,6 +132,7 @@ export async function completeReadingAction(
   revalidatePath("/tecnicas");
   revalidatePath(`/tecnicas/${outcome.slug}`);
   revalidatePath("/perfil");
+  revalidatePath("/notificaciones");
 
   let success = "Lectura registrada. Las relecturas no suman XP.";
   if (outcome.readingXp === XP.READING_FIRST) {
@@ -134,6 +146,53 @@ export async function completeReadingAction(
     xpAwarded: outcome.readingXp + outcome.bonusXp,
     badges: outcome.badges,
   };
+}
+
+const readingProgressSchema = z.object({
+  techniqueId: z.string().trim().min(1).max(64),
+  phaseIndex: z.number().int().min(0).max(20),
+  stepIndex: z.number().int().min(0).max(500),
+});
+
+export type SaveReadingProgressResult = { ok: true } | { error: string };
+
+/**
+ * Guarda el último paso visto sin revalidar la ruta actual: el reader mantiene
+ * su estado en el cliente y el inicio vuelve a leer el progreso al navegar.
+ */
+export async function saveReadingProgressAction(
+  input: unknown,
+): Promise<SaveReadingProgressResult> {
+  const user = await requireUser();
+  const parsed = readingProgressSchema.safeParse(input);
+  if (!parsed.success) return { error: "No pudimos guardar tu avance." };
+
+  const technique = await prisma.technique.findFirst({
+    where: { id: parsed.data.techniqueId, published: true },
+    select: { id: true, _count: { select: { steps: true } } },
+  });
+
+  if (!technique) return { error: "La técnica no está disponible." };
+
+  const maxStep = Math.max(0, technique._count.steps - 1);
+
+  await prisma.readingProgress.upsert({
+    where: {
+      userId_techniqueId: { userId: user.id, techniqueId: technique.id },
+    },
+    create: {
+      userId: user.id,
+      techniqueId: technique.id,
+      phaseIndex: parsed.data.phaseIndex,
+      stepIndex: Math.min(parsed.data.stepIndex, maxStep),
+    },
+    update: {
+      phaseIndex: parsed.data.phaseIndex,
+      stepIndex: Math.min(parsed.data.stepIndex, maxStep),
+    },
+  });
+
+  return { ok: true };
 }
 
 export type RegisterVideoViewResult =

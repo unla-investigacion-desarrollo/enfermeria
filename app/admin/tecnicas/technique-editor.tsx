@@ -220,6 +220,7 @@ export function TechniqueEditor({ initial }: Props) {
   const [saveState, setSaveState] = useState<
     { error: string } | { success: string } | null
   >(null);
+  const [notifyStudents, setNotifyStudents] = useState(true);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -254,6 +255,7 @@ export function TechniqueEditor({ initial }: Props) {
         images: form.images,
         videos: form.videos,
         checklist: form.checklist,
+        notifyStudents,
       };
       const result = await saveTechniqueAction(payload);
       if (!result) return;
@@ -318,6 +320,27 @@ export function TechniqueEditor({ initial }: Props) {
         {saveState && "error" in saveState ? <Alert>{saveState.error}</Alert> : null}
         {saveState && "success" in saveState ? (
           <Alert variant="success">{saveState.success}</Alert>
+        ) : null}
+
+        {form.published ? (
+          <div className="flex items-start gap-3 rounded-xl border border-border bg-white p-4">
+            <input
+              id="notify-students"
+              type="checkbox"
+              checked={notifyStudents}
+              onChange={(event) => setNotifyStudents(event.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-[hsl(var(--primary))]"
+            />
+            <div className="space-y-0.5">
+              <Label htmlFor="notify-students" className="text-sm font-semibold">
+                Avisar a estudiantes al guardar
+              </Label>
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Se notifica a quienes ya completaron la técnica o tienen un avance
+                guardado. Al guardar se crea la versión {form.version + 1}.
+              </p>
+            </div>
+          </div>
         ) : null}
 
       <Section title="Datos generales">

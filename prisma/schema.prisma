@@ -26,6 +26,10 @@ enum ActivityType {
   ESCAPE_ROOM
 }
 
+enum NotificationType {
+  TECHNIQUE_UPDATED
+}
+
 model User {
   id                 String              @id @default(cuid())
   firstName          String
@@ -38,30 +42,34 @@ model User {
   active             Boolean             @default(true)
   createdAt          DateTime            @default(now())
   readings           ReadingCompletion[]
+  readingProgress    ReadingProgress[]
   attempts           ActivityAttempt[]
   xpEvents           XpEvent[]
   badges             UserBadge[]
   videoViews         VideoView[]
+  notifications      Notification[]
 }
 
 model Technique {
-  id          String           @id @default(cuid())
-  slug        String           @unique
-  title       String
-  summary     String?
-  definition  String
-  coverImage  String?
-  published   Boolean          @default(false)
-  version     Int              @default(1)
-  updatedAt   DateTime         @updatedAt
-  objectives  Objective[]
-  materials   Material[]
-  steps       Step[]
-  images      TechniqueImage[]
-  videos      Video[]
-  checklist   ChecklistItem[]
-  activities  Activity[]
-  questions   TriviaQuestion[]
+  id            String            @id @default(cuid())
+  slug          String            @unique
+  title         String
+  summary       String?
+  definition    String
+  coverImage    String?
+  published     Boolean           @default(false)
+  version       Int               @default(1)
+  updatedAt     DateTime          @updatedAt
+  objectives    Objective[]
+  materials     Material[]
+  steps         Step[]
+  images        TechniqueImage[]
+  videos        Video[]
+  checklist     ChecklistItem[]
+  activities    Activity[]
+  questions     TriviaQuestion[]
+  progress      ReadingProgress[]
+  notifications Notification[]
 }
 
 model Objective {
@@ -153,6 +161,21 @@ model ReadingCompletion {
   completedAt DateTime @default(now())
 }
 
+/// Último punto de la lectura guiada. `stepIndex` y `phaseIndex` son 0-based
+/// para alinearse con el orden persistido de los pasos.
+model ReadingProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  techniqueId String
+  technique   Technique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  phaseIndex  Int       @default(0)
+  stepIndex   Int       @default(0)
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, techniqueId])
+}
+
 model VideoView {
   id       String   @id @default(cuid())
   userId   String
@@ -162,6 +185,28 @@ model VideoView {
   viewedAt DateTime @default(now())
 
   @@unique([userId, videoId])
+}
+
+/// Aviso para el estudiante cuando una técnica que leyó o está leyendo cambia
+/// de versión. Se mantiene uno por técnica y estudiante: una actualización
+/// posterior lo vuelve a marcar como no leído.
+model Notification {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  techniqueId String
+  technique   Technique        @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+  type        NotificationType
+  title       String
+  body        String
+  href        String
+  version     Int
+  readAt      DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([userId, techniqueId, type])
+  @@index([userId, readAt])
 }
 
 model ActivityAttempt {

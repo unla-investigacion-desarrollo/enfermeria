@@ -143,6 +143,18 @@ test("la respuesta correcta no llega antes de responder y aprobar da XP una vez"
   await expect(page.getByText("80 / 100")).toBeVisible();
   await expect(page.getByText(/Sumaste \d+ XP en este intento\./)).toHaveCount(0);
 
+  // La revisión arranca en las respuestas incorrectas y permite ver todas.
+  const review = page.locator('section[aria-labelledby="trivia-revision"]');
+  await expect(review.getByRole("button", { name: "Para repasar (2)" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(review.locator("li")).toHaveCount(2);
+  await review.getByRole("button", { name: `Ver todas (${FIXTURE_COUNT})` }).click();
+  await expect(review.locator("li")).toHaveCount(FIXTURE_COUNT);
+  await review.getByRole("button", { name: "Para repasar (2)" }).click();
+  await expect(review.locator("li")).toHaveCount(2);
+
   const secondAttempts = await prisma.activityAttempt.findMany({
     where: { userId: user.id, activityId },
     select: { score: true, passed: true },

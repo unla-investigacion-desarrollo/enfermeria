@@ -28,7 +28,10 @@ test("el inicio muestra la técnica, el buscador y el progreso", async ({ page }
   await expect(page.getByRole("heading", { name: /Hola, Lectora/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Tu progreso" })).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Colocación de vía periférica en adulto" }),
+    page.getByRole("heading", {
+      level: 2,
+      name: "Colocación de vía periférica en adulto",
+    }),
   ).toBeVisible();
 
   await page.getByLabel("Buscar técnica").fill("via");
@@ -145,6 +148,77 @@ test("el perfil muestra nivel, XP e insignias", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: "Historial de XP" })).toBeVisible();
   await expect(page.getByText("+100 XP")).toBeVisible();
   await expect(page.getByText("+20 XP")).toBeVisible();
+});
+
+test("la lectura guiada avanza por fases, guarda el progreso y evalúa checkpoints", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "La escritura se verifica en desktop");
+
+  await login(page);
+  await page.goto("/tecnicas/via-periferica-adulto");
+
+  await expect(page.getByRole("heading", { name: "Técnica paso a paso" })).toBeVisible();
+  await expect(page.getByText("Paso 1 de 29")).toBeVisible();
+
+  await page.locator("#caso").getByRole("button", { name: "Siguiente", exact: true }).click();
+  await expect(page.getByText("Paso 2 de 29")).toBeVisible();
+  await expect(page).toHaveURL(/paso=2/);
+
+  // El avance se guarda con debounce y se restaura al recargar.
+  await page.waitForTimeout(900);
+  await page.reload();
+  await expect(page.getByText("Paso 2 de 29")).toBeVisible();
+
+  // El stepper permite saltar a otra fase.
+  await page.getByRole("button", { name: "Punción", exact: true }).click();
+  await expect(page).toHaveURL(/fase=3/);
+  await expect(page.getByText("Fase 3 · La punción")).toBeVisible();
+  await expect(page.getByText("Paso 14 de 29")).toBeVisible();
+
+  const technique = await prisma.technique.findUniqueOrThrow({
+    where: { slug: "via-periferica-adulto" },
+    select: { id: true },
+  });
+  const userId = await readerId();
+
+  await expect
+    .poll(
+      async () => {
+        const progress = await prisma.readingProgress.findUnique({
+          where: {
+            userId_techniqueId: { userId, techniqueId: technique.id },
+          },
+          select: { phaseIndex: true, stepIndex: true },
+        });
+        return progress ? `${progress.phaseIndex}:${progress.stepIndex}` : null;
+      },
+      { timeout: 5000 },
+    )
+    .toBe("2:13");
+
+  // Un checkpoint se responde sin salir de la lectura y avanza de fase.
+  await page.goto("/tecnicas/via-periferica-adulto?fase=1&paso=8");
+  await expect(page.getByText("Checkpoint 1 de 1")).toBeVisible();
+  await page
+    .getByRole("radio", { name: "Lo cierro y dejo el equipo preparado en la bandeja." })
+    .check();
+  await page.getByRole("button", { name: "Comprobar" }).click();
+  await expect(page.getByText("Correcto. Buen ojo clínico.")).toBeVisible();
+  await expect(page.getByText(/1 al primer intento/)).toBeVisible();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByText("Paso 9 de 29")).toBeVisible();
+  await expect(page.getByText("Fase 2 · En la unidad")).toBeVisible();
+
+  // El repaso rápido de pasos también está paginado.
+  await page.getByText(/Repaso rápido: los 29 pasos/).click();
+  const quickReview = page.locator("details", { hasText: "Repaso rápido: los 29 pasos" });
+  await expect(quickReview.getByText("Página 1 de 6")).toBeVisible();
+  await quickReview
+    .getByRole("navigation", { name: "Paginación del repaso de pasos" })
+    .getByRole("button", { name: "Siguiente" })
+    .click();
+  await expect(quickReview.getByText("Página 2 de 6")).toBeVisible();
 });
 
 test.afterAll(async () => {

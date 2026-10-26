@@ -29,6 +29,7 @@ export function TriviaGame({ techniqueSlug, seed, questions, passScore }: Props)
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastPayload | null>(null);
+  const [reviewFilter, setReviewFilter] = useState<"incorrect" | "all">("incorrect");
   const [pending, startTransition] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -83,6 +84,12 @@ export function TriviaGame({ techniqueSlug, seed, questions, passScore }: Props)
   }
 
   if (result) {
+    const incorrect = result.questions.filter(
+      (question) => question.chosenIdx !== question.correctIdx,
+    );
+    const visibleQuestions =
+      reviewFilter === "incorrect" && incorrect.length > 0 ? incorrect : result.questions;
+
     return (
       <div className="space-y-5">
         <section
@@ -117,11 +124,54 @@ export function TriviaGame({ techniqueSlug, seed, questions, passScore }: Props)
         </section>
 
         <section aria-labelledby="trivia-revision" className="space-y-3">
-          <h2 id="trivia-revision" className="text-lg font-bold text-navy">
-            Revisión de las respuestas
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 id="trivia-revision" className="text-lg font-bold text-navy">
+              Revisión de las respuestas
+            </h2>
+            {incorrect.length > 0 ? (
+              <div className="flex gap-1.5" role="group" aria-label="Filtrar revisión">
+                <button
+                  type="button"
+                  onClick={() => setReviewFilter("incorrect")}
+                  aria-pressed={reviewFilter === "incorrect"}
+                  className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+                    reviewFilter === "incorrect"
+                      ? "border-bordo bg-bordo text-white"
+                      : "border-border bg-white text-muted-foreground hover:bg-muted",
+                  )}
+                >
+                  Para repasar ({incorrect.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReviewFilter("all")}
+                  aria-pressed={reviewFilter === "all"}
+                  className={cn(
+                    "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+                    reviewFilter === "all"
+                      ? "border-bordo bg-bordo text-white"
+                      : "border-border bg-white text-muted-foreground hover:bg-muted",
+                  )}
+                >
+                  Ver todas ({result.questions.length})
+                </button>
+              </div>
+            ) : null}
+          </div>
+
+          {reviewFilter === "incorrect" && incorrect.length > 0 ? (
+            <p className="text-xs text-muted-foreground">
+              Mostrando solo las {incorrect.length}{" "}
+              {incorrect.length === 1 ? "respuesta incorrecta" : "respuestas incorrectas"}.
+              Corregí el razonamiento antes de reintentar.
+            </p>
+          ) : null}
+
           <ol className="space-y-3">
-            {result.questions.map((question, position) => {
+            {visibleQuestions.map((question) => {
+              const originalPosition =
+                result.questions.findIndex((item) => item.id === question.id) + 1;
               const chosen = question.options[question.chosenIdx];
               const correctOption = question.options[question.correctIdx];
               const isCorrect = question.chosenIdx === question.correctIdx;
@@ -144,7 +194,7 @@ export function TriviaGame({ techniqueSlug, seed, questions, passScore }: Props)
                       />
                     )}
                     <h3 className="text-sm font-semibold">
-                      {position + 1}. {question.prompt}
+                      {originalPosition}. {question.prompt}
                     </h3>
                   </div>
 

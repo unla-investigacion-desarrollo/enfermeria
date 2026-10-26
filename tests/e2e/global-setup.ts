@@ -31,6 +31,7 @@ async function upsertTestUser(input: {
       active: input.active ?? true,
     },
     update: {
+      dni: input.dni,
       passwordHash,
       role: input.role,
       mustChangePassword: input.mustChangePassword,
@@ -49,9 +50,11 @@ export default async function globalSetup() {
   const previousUserIds = previousUsers.map((user) => user.id);
 
   if (previousUserIds.length > 0) {
+    await prisma.notification.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.userBadge.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.activityAttempt.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.videoView.deleteMany({ where: { userId: { in: previousUserIds } } });
+    await prisma.readingProgress.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.readingCompletion.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.xpEvent.deleteMany({ where: { userId: { in: previousUserIds } } });
     await prisma.user.deleteMany({ where: { id: { in: previousUserIds } } });
@@ -144,6 +147,16 @@ export default async function globalSetup() {
     mustChangePassword: false,
   });
 
+  await upsertTestUser({
+    email: "notif.e2e@unla.edu.ar",
+    dni: "10101010",
+    firstName: "Notificada",
+    lastName: "E2E",
+    password: "Notif1234!",
+    role: "STUDENT",
+    mustChangePassword: false,
+  });
+
   // Los recorridos de lectura y juegos deben arrancar sin progreso para poder
   // contar registros y XP de forma determinista en cada corrida.
   const progressUsers = await prisma.user.findMany({
@@ -154,6 +167,7 @@ export default async function globalSetup() {
           "jugador.e2e@unla.edu.ar",
           "trivia.e2e@unla.edu.ar",
           "master.e2e@unla.edu.ar",
+          "notif.e2e@unla.edu.ar",
         ],
       },
     },
@@ -162,8 +176,10 @@ export default async function globalSetup() {
   const progressUserIds = progressUsers.map((user) => user.id);
 
   await prisma.userBadge.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.notification.deleteMany({ where: { userId: { in: progressUserIds } } });
   await prisma.activityAttempt.deleteMany({ where: { userId: { in: progressUserIds } } });
   await prisma.videoView.deleteMany({ where: { userId: { in: progressUserIds } } });
+  await prisma.readingProgress.deleteMany({ where: { userId: { in: progressUserIds } } });
   await prisma.readingCompletion.deleteMany({ where: { userId: { in: progressUserIds } } });
   await prisma.xpEvent.deleteMany({ where: { userId: { in: progressUserIds } } });
 
